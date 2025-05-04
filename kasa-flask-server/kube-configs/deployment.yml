@@ -16,6 +16,7 @@ spec:
       containers:
         - name: kasa-flask-server-exporter
           image: nathannnli/mykasa:latest
+          pullPolicy: Always
           ports:
             - containerPort: 9100
           envFrom:
