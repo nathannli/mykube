@@ -1,0 +1,5 @@
+server:
+  extraScrapeConfigs:
+    - job_name: "kasa_exporter"
+      static_configs:
+        - targets: ["kasa-flask-server-exporter.prometheus.svc.cluster.local:9100"]
