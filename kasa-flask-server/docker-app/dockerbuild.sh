@@ -2,6 +2,6 @@
 
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t nathannnli/mykasa:latest \
+  -t nathannnli/mykasa:$1 \
   --push \
   docker-app/
