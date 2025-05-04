@@ -18,7 +18,7 @@ spec:
           image: nathannnli/mykasa:v5
           imagePullPolicy: Always
           ports:
-            - containerPort: 9100
+            - containerPort: 9101
           envFrom:
             - configMapRef:
                 name: kasa-config
@@ -32,5 +32,5 @@ spec:
   selector:
     app: kasa-flask-server-exporter
   ports:
-    - port: 9100
-      targetPort: 9100
+    - port: 9101
+      targetPort: 9101
