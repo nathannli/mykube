@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-server-conf
+  namespace: prometheus
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 30s
+
+    scrape_configs:
+      - job_name: 'kasa_exporter'
+        static_configs:
+          - targets: ['kasa-flask-server-exporter.kasa-flask-server.svc.cluster.local:9101']
+
