@@ -8,3 +8,4 @@ The order of the install/build process is:
 2) push the docker image to docker hub
 3) deploy the kubernetes pod
     - the kube pod will pull the docker image from docker hub (the image registry)
+    - `kubectl apply -f kube-configs/`
