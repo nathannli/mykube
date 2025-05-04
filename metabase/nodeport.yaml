@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: metabase-nodeport
+  namespace: metabase
+spec:
+  selector:
+    app: metabase
+  ports:
+    - name: metabase-nodeport
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+      nodePort: 30080
+  type: NodePort

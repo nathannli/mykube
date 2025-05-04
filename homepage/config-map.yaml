@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+data:
+  kubernetes.yaml: |
+    mode: cluster
+  settings.yaml: |
+    background: 
+      image: /images/beautiful-anime-landscape-cartoon-scene.jpg
+      blur: sm
+      brightness: 100
+      opacity: 60
+      saturation: 70
+    theme: light
+    color: neutral
+  custom.css: ""
+  custom.js: ""
+
+  bookmarks.yaml: |
+    - Shortcuts:
+        - Homepage:
+            - href: http://raspberrypi.local
+        - Prometheus:
+            - href: http://195.168.1.95:31090/
+              description: "http://raspberrypifive.local:31090/"
+        - Grafana:
+            - href: http://195.168.1.95:3000/
+              description: "http://raspberrypifive.local:3000/"
+        - Kubernetes-Dashboard:
+            - href: https://195.168.1.95:30558/
+              description: "https://raspberrypifive.local:30558/ generate token: kubectl -n kubernetes-dashboard create token admin-user"
+        - Transmission:
+            - href: http://195.168.1.95:9091/
+              description: "http://raspberrypifive.local:9091/"
+        - Pfsense:
+            - href: https://195.168.1.1/
+              description: "https://pfsense.home.arpa/"
+        - 315NAS:
+            - href: http://195.168.1.96:8080
+              description: "315nas.local or http://195.168.1.96:8080"
+        - nathanbook:
+            - href: http://195.168.1.106/
+              description: "nathanbook.local or http://195.168.1.106"
+        - metabase-myfinance:
+            - href: http://195.168.1.95:30080/dashboard/2-a-look-at-expenses?date=past1years~
+              description: "direct metabase link to your finance dashboard"
+
+  services.yaml:
+    ""
+    # - My First Group:
+    #     - My First Service:
+    #         href: http://localhost/
+    #         description: Homepage is awesome
+
+    # - My Second Group:
+    #     - My Second Service:
+    #         href: http://localhost/
+    #         description: Homepage is the best
+
+    # - My Third Group:
+    #     - My Third Service:
+    #         href: http://localhost/
+    #         description: Homepage is 😎
+
+  widgets.yaml: |
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "cluster"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+    - resources:
+        backend: resources
+        expanded: true
+        cpu: true
+        memory: true
+        network: default
+    - search:
+        provider: duckduckgo
+        target: _blank
+  docker.yaml: ""

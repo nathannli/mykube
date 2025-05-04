@@ -1,0 +1,3 @@
+follow instruction from manual build on transmission github
+- don't download from release, clone from the link in the manual build instruction
+- default port 9091
