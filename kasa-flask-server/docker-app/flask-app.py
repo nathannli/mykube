@@ -5,6 +5,9 @@ from kasa import Device, Module
 import os
 
 HS300_IP = os.environ.get("PLUG_IP")
+if HS300_IP is None:
+    HS300_IP = "195.168.1.69"
+NAME = "kasapower"
 
 app = Flask(__name__)
 
@@ -37,14 +40,17 @@ def metrics():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     data = loop.run_until_complete(get_metrics())
-    try:
+    if type(data) == str:
+        return data, 500, {'Content-Type': CONTENT_TYPE_LATEST}
+    else:
+        g = Gauge(name=NAME,
+                      documentation=f"Power consumption in watts for each device",
+                      labelnames=["device"],
+                      unit="watts",
+                      registry=registry)
         for key, value in data.items():
-            g = Gauge(
-                f"kasa_power_watts_{key}", f"Power consumption in watts for {key}", registry=registry)
-            g.set(value)
+            g.labels(device=key).set(value)
         return generate_latest(registry), 200, {'Content-Type': CONTENT_TYPE_LATEST}
-    except Exception as e:
-        return data
 
 
 if __name__ == "__main__":
