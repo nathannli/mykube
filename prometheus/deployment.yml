@@ -53,3 +53,15 @@ spec:
       targetPort: 9090
       nodePort: 31090
   type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-svc
+  namespace: prometheus
+spec:
+  selector:
+    app: prometheus-server
+  ports:
+    - port: 9090
+      targetPort: 9090
