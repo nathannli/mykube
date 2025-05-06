@@ -48,9 +48,8 @@ async def get_metrics_KP125M(ip_list: list[str]) -> dict:
             )
             dev = await Device.connect(config=device_config)
             await dev.update()
-            for plug in dev.children:
-                energy = plug.modules[Module.Energy]
-                output_dict[plug.alias] = energy.current_consumption
+            energy = dev.modules[Module.Energy]
+            output_dict[dev.alias] = energy.current_consumption
         except Exception as e:
             return f"IP: {ip} ------------ Got Nothing: error: {e}"
     return output_dict
