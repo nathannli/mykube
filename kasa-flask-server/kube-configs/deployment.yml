@@ -15,10 +15,13 @@ spec:
     spec:
       containers:
         - name: kasa-flask-server-exporter
-          image: nathannnli/mykasa:v10
+          image: nathannnli/mykasa:v11
           imagePullPolicy: Always
           ports:
             - containerPort: 9101
+          envFrom:
+            - configMapRef:
+                name: kasa-config
 ---
 apiVersion: v1
 kind: Service

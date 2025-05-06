@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kasa-config
+  namespace: kasa-flask-server
+data:
+  KASA_USERNAME: "username redacted"
+  KASA_PASSWORD: "password redacted"
+  HS300_IP: "195.168.1.69"
+  KP125M_IPS: "195.168.1.66"
