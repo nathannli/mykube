@@ -7,4 +7,4 @@ data:
   KASA_USERNAME: "username redacted"
   KASA_PASSWORD: "password redacted"
   HS300_IP: "195.168.1.69"
-  KP125M_IPS: "195.168.1.66"
+  KP125M_IPS: "195.168.1.66,195.168.1.70"
