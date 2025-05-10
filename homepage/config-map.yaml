@@ -23,7 +23,7 @@ data:
   bookmarks.yaml: |
     - Shortcuts:
         - Homepage:
-            - href: http://raspberrypi.local
+            - href: http://raspberrypifive.local
         - Prometheus:
             - href: http://195.168.1.95:31090/
               description: "http://raspberrypifive.local:31090/"
@@ -46,7 +46,10 @@ data:
             - href: http://195.168.1.106/
               description: "nathanbook.local or http://195.168.1.106"
         - metabase-myfinance:
-            - href: http://195.168.1.95:30080/dashboard/2-a-look-at-expenses?date=past1years~
+            - href: http://195.168.1.95:30080/dashboard/2-nathan-finance?date=past1years~
+              description: "direct metabase link to your finance dashboard"
+        - metabase-parentsfinance:
+            - href: http://195.168.1.95:30080/dashboard/4-parents-dashboard
               description: "direct metabase link to your finance dashboard"
 
   services.yaml:
