@@ -4,14 +4,14 @@
 NAMESPACE="postgres"
 POD_NAME="my-release-postgresql-0"
 DB_NAME="finance"
-DB_USER="postgres"
-DB_PASSWORD="Qr1W2PhKmZ"
+DB_USER="db username"
+DB_PASSWORD="db password"
 BACKUP_DIR="/home/nathan/pg-backup"
 BACKUP_FILE="backup_$(date +\%Y\%m\%d_%H%M).sql"
 REMOTE_DIR="/nathan/pg-backup"
 FTP_HOST="195.168.1.96"
-FTP_USER="Nathan"
-FTP_PASS="8lcVDx8pVsxEkEG9z9o3"
+FTP_USER="ftp username"
+FTP_PASS="ftp pass"
 KEEP_DAYS=60  # Number of days to keep local backups
 
 # Ensure backup directory exists
