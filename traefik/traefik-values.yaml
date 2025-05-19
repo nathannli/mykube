@@ -1,0 +1,10 @@
+additionalArguments:
+  - "--entrypoints.web.address=:80"
+  - "--entrypoints.websecure.address=:443"
+  - "--providers.kubernetescrd"
+  - "--providers.kubernetesingress"
+  - "--entrypoints.web.ipv6=false"
+  - "--entrypoints.websecure.ipv6=false"
+
+# Disable IPv6 by not listening on [::]
+# (Traefik will only listen on IPv4 this way)
