@@ -28,7 +28,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: HOMEPAGE_ALLOWED_HOSTS
-              value: raspberrypifive.local,195.168.1.95:30397,195.168.1.95,homepage.dev
+              value: raspberrypifive.local,195.168.1.95:30397
           ports:
             - name: http
               containerPort: 3000
