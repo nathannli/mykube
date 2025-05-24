@@ -51,6 +51,8 @@ data:
         - metabase-parentsfinance:
             - href: http://195.168.1.95:30080/dashboard/4-parents-dashboard
               description: "direct metabase link to parents finance dashboard"
+        - xiaomi-router:
+            - href: http://195.168.1.64/
 
   services.yaml:
     ""
