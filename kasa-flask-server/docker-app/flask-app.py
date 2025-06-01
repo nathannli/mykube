@@ -65,7 +65,9 @@ def metrics():
     hs300_data = loop.run_until_complete(get_metrics_HS300(HS300_IP))
     kp125m_data = loop.run_until_complete(get_metrics_KP125M(KP125M_IPS))
     if type(hs300_data) == str or type(kp125m_data) == str:
-        return hs300_data, 500, {'Content-Type': CONTENT_TYPE_LATEST}
+        print(f"hs300_data: {hs300_data}")
+        print(f"kp125m_data: {kp125m_data}")
+        return "there was an error in the flask app", 500, {'Content-Type': CONTENT_TYPE_LATEST}
     else:
         data = {**hs300_data, **kp125m_data}
         g = Gauge(name=NAME,
