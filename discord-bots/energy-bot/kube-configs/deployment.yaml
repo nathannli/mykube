@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: discord-energy-bot
-        image: nathannnli/mydiscordenergybot:v1
+        image: nathannnli/mydiscordenergybot:v2
         env:
         - name: BOT_TOKEN
           valueFrom:
