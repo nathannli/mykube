@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-energy-bot
+  namespace: discord-bots
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-energy-bot
+  template:
+    metadata:
+      labels:
+        app: discord-energy-bot
+    spec:
+      containers:
+      - name: discord-energy-bot
+        image: nathannnli/mydiscordenergybot:v1
+        env:
+        - name: BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: discord-secrets
+              key: token
+        - name: GUILD_ID
+          valueFrom:
+            secretKeyRef:
+              name: discord-secrets
+              key: guild_id
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
