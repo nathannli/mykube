@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: govee-flask-server-exporter
+  namespace: govee-flask-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: govee-flask-server-exporter
+  template:
+    metadata:
+      labels:
+        app: govee-flask-server-exporter
+    spec:
+      containers:
+        - name: govee-flask-server-exporter
+          image: nathannnli/mygovee:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9101
+          envFrom:
+            - configMapRef:
+                name: govee-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: govee-flask-server-exporter
+  namespace: govee-flask-server
+spec:
+  selector:
+    app: govee-flask-server-exporter
+  ports:
+    - port: 9101
+      targetPort: 9101
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: govee-flask-server-exporter-nodeport
+  namespace: govee-flask-server
+spec:
+  selector:
+    app: govee-flask-server-exporter
+  ports:
+    - name: govee-flask-server-exporter-nodeport
+      protocol: TCP
+      port: 9101
+      targetPort: 9101
+      nodePort: 30101
+  type: NodePort
