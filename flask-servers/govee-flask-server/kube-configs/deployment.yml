@@ -19,9 +19,22 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 9101
-          envFrom:
-            - configMapRef:
-                name: govee-config
+          env:
+            - name: GOVEE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: govee-secrets
+                  key: api_key
+            - name: GOVEE_DEVICE_ID
+              valueFrom:
+                secretKeyRef:
+                  name: govee-secrets
+                  key: device_id
+            - name: GOVEE_DEVICE_SKU
+              valueFrom:
+                configMapKeyRef:
+                  name: govee-config
+                  key: GOVEE_DEVICE_SKU
 ---
 apiVersion: v1
 kind: Service
