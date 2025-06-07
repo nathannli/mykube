@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: govee-flask-server-exporter
-          image: nathannnli/mygovee:v1
+          image: nathannnli/mygovee:v2
           imagePullPolicy: Always
           ports:
             - containerPort: 9101
