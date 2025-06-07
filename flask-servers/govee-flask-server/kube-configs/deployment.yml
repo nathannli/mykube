@@ -61,5 +61,5 @@ spec:
       protocol: TCP
       port: 9101
       targetPort: 9101
-      nodePort: 30101
+      nodePort: 30102
   type: NodePort
