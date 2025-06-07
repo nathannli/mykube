@@ -57,16 +57,16 @@ def metrics():
         data = govee_data
         temp_gauge = Gauge(name=NAME,
                     documentation=f"Temperature in F for the govee device",
-                    labelnames=["govee"],
+                    labelnames=["goveeTemp"],
                     unit="F",
                     registry=registry)
-        temp_gauge.labels(govee=GOVEE_DEVICE_ID).set(data["temperatureF"])
+        temp_gauge.labels(govee=temp_gauge).set(data["temperatureF"])
         humidity_gauge = Gauge(name=NAME,
                     documentation=f"Humidity in % for the govee device",
-                    labelnames=["govee"],
+                    labelnames=["goveeHumidity"],
                     unit="%",
                     registry=registry)
-        humidity_gauge.labels(govee=GOVEE_DEVICE_ID).set(data["humidity"])
+        humidity_gauge.labels(govee=humidity_gauge).set(data["humidity"])
         return generate_latest(registry), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 
