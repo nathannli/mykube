@@ -1,5 +1,10 @@
 from flask import Flask
-from prometheus_client import CollectorRegistry, generate_latest, CONTENT_TYPE_LATEST, Gauge
+from prometheus_client import (
+    CollectorRegistry,
+    generate_latest,
+    CONTENT_TYPE_LATEST,
+    Gauge,
+)
 import asyncio
 import os
 import requests
@@ -19,16 +24,10 @@ async def get_temp_humidity(request_id: str) -> dict | str:
     output_dict = {}
     try:
         url = f"{GOVEE_BASE_URL}{GOVEE_PROPERTIES_URL_SUFFIX}"
-        headers = {
-            "Govee-API-Key": GOVEE_API_KEY,
-            "Content-Type": "application/json"
-        }
+        headers = {"Govee-API-Key": GOVEE_API_KEY, "Content-Type": "application/json"}
         body = {
             "requestId": request_id,
-            "payload": {
-                "sku": GOVEE_DEVICE_SKU,
-                "device": GOVEE_DEVICE_ID
-            }
+            "payload": {"sku": GOVEE_DEVICE_SKU, "device": GOVEE_DEVICE_ID},
         }
         response = requests.post(url, headers=headers, json=body)
         data = response.json()["payload"]["capabilities"]
@@ -52,22 +51,29 @@ def metrics():
     govee_data = loop.run_until_complete(get_temp_humidity(GOVEE_DEVICE_ID))
     if type(govee_data) == str:
         print(f"govee_data: {govee_data}")
-        return "there was an error in the flask app", 500, {'Content-Type': CONTENT_TYPE_LATEST}
+        return (
+            "there was an error in the flask app",
+            500,
+            {"Content-Type": CONTENT_TYPE_LATEST},
+        )
     else:
         data = govee_data
-        temp_gauge = Gauge(name=NAME,
-                    documentation=f"Temperature in F for the govee device",
-                    labelnames=["goveeTemp"],
-                    unit="F",
-                    registry=registry)
-        temp_gauge.labels(govee=temp_gauge).set(data["temperatureF"])
-        humidity_gauge = Gauge(name=NAME,
-                    documentation=f"Humidity in % for the govee device",
-                    labelnames=["goveeHumidity"],
-                    unit="%",
-                    registry=registry)
-        humidity_gauge.labels(govee=humidity_gauge).set(data["humidity"])
-        return generate_latest(registry), 200, {'Content-Type': CONTENT_TYPE_LATEST}
+        temp_gauge = Gauge(
+            f"{NAME}_temperature",
+            documentation=f"Temperature in F for the govee device",
+            unit="F",
+            registry=registry,
+        )
+        temp_gauge.set(data["temperatureF"])
+
+        humidity_gauge = Gauge(
+            f"{NAME}_humidity",
+            documentation=f"Humidity in % for the govee device",
+            unit="percentage",
+            registry=registry,
+        )
+        humidity_gauge.set(data["humidity"])
+        return generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
 
 
 if __name__ == "__main__":
