@@ -13,4 +13,8 @@ data:
       - job_name: 'kasa_exporter'
         static_configs:
           - targets: ['kasa-flask-server-exporter.kasa-flask-server.svc.cluster.local:9101']
+      
+      - job_name: 'govee_exporter'
+        static_configs:
+          - targets: ['govee-flask-server-exporter.govee-flask-server.svc.cluster.local:9101']
 
