@@ -19,9 +19,27 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 9101
-          envFrom:
-            - configMapRef:
-                name: kasa-config
+          env:
+            - name: HS300_IP
+              valueFrom:
+                configMapKeyRef:
+                  name: kasa-config
+                  key: HS300_IP
+            - name: KP125M_IPS
+              valueFrom:
+                configMapKeyRef:
+                  name: kasa-config
+                  key: KP125M_IPS
+            - name: KASA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: kasa-secrets
+                  key: username
+            - name: KASA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kasa-secrets
+                  key: password
 ---
 apiVersion: v1
 kind: Service
