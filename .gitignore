@@ -1,2 +1,2 @@
-discord-bots/energy-bot/kube-configs/secrets.yaml
-flask-servers/govee-flask-server/kube-configs/secrets.yaml
+**/secrets.yaml
+**/secrets.yml
