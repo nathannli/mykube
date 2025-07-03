@@ -22,11 +22,11 @@ spec:
             secretKeyRef:
               name: alert-bot-secrets
               key: token
-        - name: GUILD_ID
+        - name: CHANNEL_ID
           valueFrom:
             secretKeyRef:
               name: alert-bot-secrets
-              key: guild_id
+              key: channel_id
         resources:
           limits:
             memory: "256Mi"
