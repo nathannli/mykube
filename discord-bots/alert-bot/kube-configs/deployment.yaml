@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: discord-alert-bot
-        image: nathannnli/mydiscordalertbot:v2
+        image: nathannnli/mydiscordalertbot:v6
         env:
         - name: BOT_TOKEN
           valueFrom:
