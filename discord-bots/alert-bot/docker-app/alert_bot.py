@@ -2,6 +2,7 @@ from flask import Flask, request
 import discord
 import asyncio
 import os
+import threading
 
 app = Flask(__name__)
 client = discord.Client(intents=discord.Intents.default())
@@ -23,5 +24,11 @@ def send_alert():
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user}')
+    
+def run_flask():
+    app.run(host='0.0.0.0', port=5000)
 
-client.run(bot_token)
+if __name__ == "__main__":
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
+    client.run(bot_token)
