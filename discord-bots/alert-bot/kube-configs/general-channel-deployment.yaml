@@ -1,32 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: discord-alert-bot
+  name: discord-general-channel-alert-bot
   namespace: discord-bots
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: discord-alert-bot
+      app: discord-general-channel-alert-bot
   template:
     metadata:
       labels:
-        app: discord-alert-bot
+        app: discord-general-channel-alert-bot
     spec:
       containers:
-      - name: discord-alert-bot
+      - name: discord-general-channel-alert-bot
         image: nathannnli/mydiscordalertbot:v6
         env:
         - name: BOT_TOKEN
           valueFrom:
             secretKeyRef:
               name: alert-bot-secrets
-              key: token
+              key: bot_token
         - name: CHANNEL_ID
           valueFrom:
             secretKeyRef:
               name: alert-bot-secrets
-              key: channel_id
+              key: general_channel_id
         resources:
           limits:
             memory: "256Mi"
@@ -37,13 +37,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: discord-alert-bot-node-port
+  name: discord-general-channel-alert-bot-node-port
   namespace: discord-bots
 spec:
   type: NodePort
   selector:
-    app: discord-alert-bot
+    app: discord-general-channel-alert-bot
   ports:
     - port: 5000
       targetPort: 5000
-      nodePort: 30007
+      nodePort: 30008
