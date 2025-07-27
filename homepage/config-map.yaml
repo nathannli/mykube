@@ -40,8 +40,8 @@ data:
             - href: https://195.168.1.1/
               description: "https://pfsense.home.arpa/"
         - 315NAS:
-            - href: http://195.168.1.96:8080
-              description: "315nas.local or http://195.168.1.96:8080"
+            - href: http://195.168.1.61:8080
+              description: "315nas.local or http://195.168.1.61:8080"
         - nathanbook:
             - href: http://195.168.1.106/
               description: "nathanbook.local or http://195.168.1.106"
