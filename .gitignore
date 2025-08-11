@@ -1,2 +1,4 @@
 **/secrets.yaml
 **/secrets.yml
+.idea
+.DS_Store

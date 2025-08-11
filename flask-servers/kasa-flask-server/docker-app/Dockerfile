@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY flask-app.py .
 
 EXPOSE 9100
-CMD ["python", "flask-app.py"]
+CMD ["python", "-u", "flask-app.py"]
