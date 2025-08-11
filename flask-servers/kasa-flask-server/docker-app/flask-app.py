@@ -1,24 +1,24 @@
 import asyncio
-import os
-from typing import Any
 import logging
+import os
 import sys
+from typing import Any
 
 from flask import Flask, jsonify
 from kasa import (
-    Device,
-    Module,
-    DeviceConnectionParameters,
-    DeviceConfig,
     Credentials,
-    DeviceFamily,
+    Device,
+    DeviceConfig,
+    DeviceConnectionParameters,
     DeviceEncryptionType,
+    DeviceFamily,
+    Module,
 )
 from prometheus_client import (
-    CollectorRegistry,
-    generate_latest,
     CONTENT_TYPE_LATEST,
+    CollectorRegistry,
     Gauge,
+    generate_latest,
 )
 
 # user config
@@ -37,7 +37,7 @@ KASA_KP125M_DEVICE_CONNECT_PARAM = DeviceConnectionParameters(
 )
 
 HS300_DEVICE_NAME_LIST = ["13k", "14kf", "14ks", "9950x", "Radiator"]
-DO_NOT_TURN_OFF_LIST = ["Radiator", "alienware", "odysey-g9-57"]
+DO_NOT_TURN_OFF_LIST = ["Radiator", "alienware", "odyssey-g9-57", "macmini"]
 
 LOW_POWER_THRESHOLD_WATTS = 5
 
@@ -93,7 +93,7 @@ async def power_off_radiator_HS300(ip: str) -> bool:
         for plug in dev.children:
             if plug.alias is not None and plug.alias.lower() == plug_name.lower():
                 await plug.turn_off()
-                log.info(f"Turned off plug {plug_name}")
+                logger.info(f"Turned off plug {plug_name}")
                 return True
         logger.warning(f"Plug {plug_name} not found")
         return False
