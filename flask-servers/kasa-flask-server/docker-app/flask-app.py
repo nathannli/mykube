@@ -1,9 +1,11 @@
 import asyncio
 import logging
 import os
+import re
 import sys
 from typing import Any
 
+import requests
 from flask import Flask, jsonify
 from kasa import (
     Credentials,
@@ -23,7 +25,7 @@ from prometheus_client import (
 
 # user config
 HS300_IP: str = os.getenv("HS300_IP")
-KP125M_IPS: str = os.getenv("KP125M_IPS").split(",")
+KP125M_IPS: list[str] = os.getenv("KP125M_IPS").split(",")
 NAME = "kasapower"
 KASA_USERNAME = os.getenv("KASA_USERNAME")
 KASA_PASSWORD = os.getenv("KASA_PASSWORD")
@@ -40,6 +42,9 @@ HS300_DEVICE_NAME_LIST = ["13k", "14kf", "14ks", "9950x", "Radiator"]
 DO_NOT_TURN_OFF_LIST = ["Radiator", "alienware", "odyssey-g9-57", "macmini"]
 
 LOW_POWER_THRESHOLD_WATTS = 5
+
+# discord msg alerts
+DISCORD_ALERT_BOT_URL = "http://discord-general-channel-alert-bot-node-port.discord-bots.svc.cluster.local:5000/alert"
 
 # init logging
 # Create a logger
@@ -65,6 +70,16 @@ logging.getLogger("werkzeug").disabled = True
 app = Flask(__name__)
 
 
+def obscure_credentials(message):
+    # Regex to find URLs with credentials: scheme://username:password@host/...
+    return re.sub(r"(ftp://)([^:/\s]+):([^@/\s]+)@", r"\1nnn:nnn@", message)
+
+
+def send_discord_message(message):
+    payload_dict = {"message": obscure_credentials(message)}
+    requests.post(DISCORD_ALERT_BOT_URL, json=payload_dict)
+
+
 async def get_metrics_HS300(ip: str) -> dict[Any, Any] | str:
     output_dict = {}
     dev = await Device.connect(host=ip)
@@ -74,9 +89,6 @@ async def get_metrics_HS300(ip: str) -> dict[Any, Any] | str:
             plug_name: str = plug.alias
             energy = plug.modules[Module.Energy]
             energy_consumption: int = energy.current_consumption
-            # if the power is below operating threshold, turn off the plug
-            if energy_consumption < LOW_POWER_THRESHOLD_WATTS:
-                await power_off_plug_HS300(plug_name, dev)
             output_dict[plug_name] = energy_consumption
         return output_dict
     except Exception as e:
@@ -85,39 +97,113 @@ async def get_metrics_HS300(ip: str) -> dict[Any, Any] | str:
         await dev.disconnect()
 
 
-async def power_off_radiator_HS300(ip: str) -> bool:
-    plug_name: str = "Radiator"
+async def turn_off_plugs_if_no_power_HS300(ip: str) -> bool:
     dev = await Device.connect(host=ip)
     try:
         await dev.update()
         for plug in dev.children:
-            if plug.alias is not None and plug.alias.lower() == plug_name.lower():
-                await plug.turn_off()
-                logger.info(f"Turned off plug {plug_name}")
-                return True
-        logger.warning(f"Plug {plug_name} not found")
-        return False
+            if plug.alias is not None and plug.alias not in DO_NOT_TURN_OFF_LIST:
+                if plug.is_on:
+                    plug_energy = plug.modules[Module.Energy]
+                    if plug_energy.current_consumption < LOW_POWER_THRESHOLD_WATTS:
+                        await plug.turn_off()
+                        send_discord_message(f"Plug {plug.alias} turned off")
+                    else:
+                        logger.error(f"Plug {plug.alias} is still on")
+                        return False
     except Exception as e:
         logger.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
         return False
+    finally:
+        await dev.disconnect()
+    return True
 
 
-async def power_off_plug_HS300(plug_name: str, dev: Device) -> bool | str:
+async def check_all_plugs_are_off_HS300(ip: str) -> bool:
+    dev = await Device.connect(host=ip)
     try:
         await dev.update()
         for plug in dev.children:
-            if (
-                plug.alias is not None
-                and plug.alias.lower() == plug_name.lower()
-                and plug.alias not in DO_NOT_TURN_OFF_LIST
-            ):
-                await plug.turn_off()
-                logger.info(f"Turned off plug {plug_name}")
-                return True
-        logger.warning(f"Plug {plug_name} not found")
-        return False
+            if plug.alias is not None and plug.alias not in DO_NOT_TURN_OFF_LIST:
+                if plug.is_on:
+                    logger.error(f"Plug {plug.alias} is still on")
+                    return False
     except Exception as e:
-        return f"Fail to turn off {plug_name}: {dev.host} | {e}"
+        logger.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+        return False
+    finally:
+        await dev.disconnect()
+    return True
+
+
+async def power_off_radiator_HS300() -> bool:
+    plug_name: str = "Radiator"
+    dev = await Device.connect(host=HS300_IP)
+    all_plugs_are_off = await check_all_plugs_are_off_HS300(
+        HS300_IP
+    ) and check_all_plugs_are_off_KP125M(KP125M_IPS)
+    if all_plugs_are_off:
+        try:
+            await dev.update()
+            for plug in dev.children:
+                if plug.alias is not None and plug.alias.lower() == plug_name.lower():
+                    await plug.turn_off()
+                    send_discord_message(f"Plug {plug.alias} turned off")
+                    return True
+            logger.warning(f"Plug {plug_name} not found")
+            return False
+        except Exception as e:
+            logger.error(f"IP: {HS300_IP} ------------ Got Nothing: error: {e}")
+            return False
+    else:
+        return False
+
+
+async def check_all_plugs_are_off_KP125M(ip_list: list[str]) -> bool:
+    for ip in ip_list:
+        device_config = DeviceConfig(
+            host=ip,
+            credentials=Credentials(username=KASA_USERNAME, password=KASA_PASSWORD),
+            connection_type=KASA_KP125M_DEVICE_CONNECT_PARAM,
+        )
+        dev = await Device.connect(config=device_config)
+        try:
+            await dev.update()
+            if dev.alias not in DO_NOT_TURN_OFF_LIST and dev.is_on:
+                logger.error(f"Plug {dev.alias} is still on")
+                return False
+        except Exception as e:
+            logger.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+            return False
+        finally:
+            await dev.disconnect()
+    return True
+
+
+async def turn_off_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
+    for ip in ip_list:
+        device_config = DeviceConfig(
+            host=ip,
+            credentials=Credentials(username=KASA_USERNAME, password=KASA_PASSWORD),
+            connection_type=KASA_KP125M_DEVICE_CONNECT_PARAM,
+        )
+        dev = await Device.connect(config=device_config)
+        try:
+            await dev.update()
+            if dev.alias not in DO_NOT_TURN_OFF_LIST and dev.is_on:
+                device_energy = dev.modules[Module.Energy]
+                if device_energy.current_consumption < LOW_POWER_THRESHOLD_WATTS:
+                    await dev.turn_off()
+                    send_discord_message(f"Plug {dev.alias} turned off")
+                else:
+                    logger.error(f"Plug {dev.alias} is still on")
+                    return False
+        except Exception as e:
+            logger.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+            return False
+        finally:
+            await dev.disconnect()
+    return True
 
 
 async def get_metrics_KP125M(ip_list: list[str]) -> str | dict[Any, Any]:
@@ -134,29 +220,12 @@ async def get_metrics_KP125M(ip_list: list[str]) -> str | dict[Any, Any]:
             device_alias: str = dev.alias
             energy = dev.modules[Module.Energy]
             energy_consumption: int = energy.current_consumption
-            # if the power is below operating threshold, turn off the plug
-            if energy_consumption < LOW_POWER_THRESHOLD_WATTS:
-                await power_off_plug_KP125M(device_alias, dev)
             output_dict[device_alias] = energy_consumption
         except Exception as e:
             return f"IP: {ip} ------------ Got Nothing: error: {e}"
         finally:
             await dev.disconnect()
     return output_dict
-
-
-async def power_off_plug_KP125M(plug_name: str, dev: Device) -> bool | str:
-    if dev.alias is not None and dev.alias not in DO_NOT_TURN_OFF_LIST:
-        try:
-            await dev.update()
-            await dev.turn_off()
-            logger.info(f"Turned off plug {plug_name}")
-            return True
-        except Exception as e:
-            logger.error(f"Fail to turn off {plug_name}: {dev.host} | {e}")
-            return False
-    else:
-        return False
 
 
 @app.route("/metrics")
@@ -190,19 +259,21 @@ def metrics():
         return generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
 
 
-@app.route("/poweroffradiator", methods=["POST"])
+@app.route("/poweroff", methods=["POST"])
 def trigger_power_off():
     try:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        loop.run_until_complete(power_off_radiator_HS300(HS300_IP))
-        return jsonify({"status": "success", "message": "radiator power off"}), 200
+        loop.run_until_complete(turn_off_plugs_if_no_power_HS300(HS300_IP))
+        loop.run_until_complete(turn_off_plugs_if_no_power_KP125M(KP125M_IPS))
+        loop.run_until_complete(power_off_radiator_HS300())
+        return jsonify({"status": "success", "message": "poweroff success"}), 200
     except Exception as e:
         logger.exception(f"power off error: {e}")
         return jsonify(
             {
-                "status": "radiator power off failure",
-                "message": "radiator power off failure",
+                "status": "failure",
+                "message": "power off failure",
             }
         ), 400
 
