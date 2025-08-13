@@ -2,3 +2,4 @@ python-kasa
 prometheus_client
 flask
 requests
+anyio
