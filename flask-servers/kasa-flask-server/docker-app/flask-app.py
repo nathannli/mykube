@@ -147,8 +147,9 @@ async def power_off_radiator_HS300() -> bool:
             await dev.update()
             for plug in dev.children:
                 if plug.alias is not None and plug.alias.lower() == plug_name.lower():
-                    await plug.turn_off()
-                    send_discord_message(f"Plug {plug.alias} turned off")
+                    if plug.is_on:
+                        await plug.turn_off()
+                        send_discord_message(f"Plug {plug.alias} turned off")
                     return True
             logger.warning(f"Plug {plug_name} not found")
             return False
