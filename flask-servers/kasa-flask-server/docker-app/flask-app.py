@@ -199,6 +199,9 @@ async def get_metrics_KP125M(ip_list: list[str]) -> dict[Any, Any]:
         except _ConnectionError as ce:
             LOGGER.error(f"IP: {ip} ------------ Connection Error: {ce}")
             continue
+        except TimeoutError as te:
+            LOGGER.error(f"IP: {ip} ------------ Timeout Error: {te}")
+            continue
         try:
             await dev.update()
             device_alias: str = dev.alias
