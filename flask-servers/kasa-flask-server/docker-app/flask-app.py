@@ -1,6 +1,7 @@
 import asyncio
 import re
 from typing import Any
+import atexit
 
 import requests
 from config import Config
@@ -30,9 +31,12 @@ LOOP = asyncio.new_event_loop()
 asyncio.set_event_loop(LOOP)
 
 
-@app.teardown_appcontext
-def shutdown_session(exception=None):
+@atexit.register
+def shutdown_event_loop():
+    LOGGER.info("Shutting down event loop")
+    LOOP.stop()
     LOOP.close()
+    LOGGER.info("Event loop closed")
 
 
 def obscure_credentials(message):
