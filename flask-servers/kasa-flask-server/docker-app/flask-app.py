@@ -221,9 +221,14 @@ def metrics():
     registry = CollectorRegistry()
 
     # Run asyncio task inside Flask
+    hs300_data = {}
+    kp125m_data = {}
     try:
-        hs300_data = asyncio.run(get_metrics_HS300(CONFIG.HS300_IP))
-        kp125m_data = asyncio.run(get_metrics_KP125M(CONFIG.KP125M_IPS))
+        hs300_data = LOOP.run_until_complete(get_metrics_HS300(CONFIG.HS300_IP))
+    except Exception as e:
+        LOGGER.error(f"Error in metrics route from get_metrics_HS300: {e}")
+    try:
+        kp125m_data = LOOP.run_until_complete(get_metrics_KP125M(CONFIG.KP125M_IPS))
         data = {**hs300_data, **kp125m_data}
         g = Gauge(
             name=CONFIG.NAME,
