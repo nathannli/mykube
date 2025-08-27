@@ -141,6 +141,7 @@ async def check_all_plugs_are_off_KP125M(ip_list: list[str]) -> bool:
                 username=CONFIG.KASA_USERNAME, password=CONFIG.KASA_PASSWORD
             ),
             connection_type=CONFIG.KASA_KP125M_DEVICE_CONNECT_PARAM,
+            timeout=10,
         )
         dev = await Device.connect(config=device_config)
         try:
