@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: metabase-container
-          image: metabase/metabase:v0.56.4.x
+          image: metabase/metabase:v0.56.4.3
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
@@ -27,8 +27,14 @@ spec:
             - name: MB_DB_PORT
               value: "5432"
             - name: MB_DB_USER
-              value: "username"
+              valueFrom:
+                secretKeyRef:
+                  name: metabase-secrets
+                  key: db-username
             - name: MB_DB_PASS
-              value: "password"
+              valueFrom:
+                secretKeyRef:
+                  name: metabase-secrets
+                  key: db-password
             - name: MB_DB_HOST
-              value: "10.43.199.250"
+              value: "my-release-postgresql.postgres.svc.cluster.local"
