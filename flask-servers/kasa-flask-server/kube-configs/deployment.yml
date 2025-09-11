@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: kasa-flask-server-exporter
-          image: nathannnli/mykasa:v37
+          image: nathannnli/mykasa:v39
           imagePullPolicy: Always
           ports:
             - containerPort: 9101

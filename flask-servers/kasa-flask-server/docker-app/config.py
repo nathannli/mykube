@@ -21,7 +21,7 @@ class Config:
     )
 
     HS300_DEVICE_NAME_LIST = ["13k", "14kf", "14ks", "9950x", "Radiator"]
-    DO_NOT_TURN_OFF_LIST = ["Radiator", "alienware", "odyssey-g9-57", "macmini", "Kuycon6k"]
+    DO_NOT_TURN_OFF_LIST = ["Radiator", "alienware", "odyssey-g9-57", "macmini", "Kuycon6k", "LGDualUp"]
 
     LOW_POWER_THRESHOLD_WATTS = 5
 
