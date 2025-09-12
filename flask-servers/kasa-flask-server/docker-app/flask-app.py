@@ -27,16 +27,16 @@ LOGGER = Logger().get_logger()
 app = Flask(__name__)
 
 # create shared event loop
-LOOP = asyncio.new_event_loop()
-asyncio.set_event_loop(LOOP)
+# LOOP = asyncio.new_event_loop()
+# asyncio.set_event_loop(LOOP)
 
 
-@atexit.register
-def shutdown_event_loop():
-    LOGGER.info("Shutting down event loop")
-    LOOP.stop()
-    LOOP.close()
-    LOGGER.info("Event loop closed")
+# @atexit.register
+# def shutdown_event_loop():
+#     LOGGER.info("Shutting down event loop")
+#     LOOP.stop()
+#     LOOP.close()
+#     LOGGER.info("Event loop closed")
 
 
 def obscure_credentials(message):
@@ -225,11 +225,13 @@ def metrics():
     hs300_data = {}
     kp125m_data = {}
     try:
-        hs300_data = LOOP.run_until_complete(get_metrics_HS300(CONFIG.HS300_IP))
+        # hs300_data = LOOP.run_until_complete(get_metrics_HS300(CONFIG.HS300_IP))
+        hs300_data = asyncio.run(get_metrics_HS300(CONFIG.HS300_IP))
     except Exception as e:
         LOGGER.error(f"Error in metrics route from get_metrics_HS300: {e}")
     try:
-        kp125m_data = LOOP.run_until_complete(get_metrics_KP125M(CONFIG.KP125M_IPS))
+        # kp125m_data = LOOP.run_until_complete(get_metrics_KP125M(CONFIG.KP125M_IPS))
+        kp125m_data = asyncio.run(get_metrics_KP125M(CONFIG.KP125M_IPS))
         data = {**hs300_data, **kp125m_data}
         g = Gauge(
             name=CONFIG.NAME,
@@ -253,9 +255,12 @@ def metrics():
 @app.route("/poweroff", methods=["POST"])
 def trigger_power_off():
     try:
-        LOOP.run_until_complete(turn_off_plugs_if_no_power_HS300(CONFIG.HS300_IP))
-        LOOP.run_until_complete(turn_off_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS))
-        LOOP.run_until_complete(power_off_radiator_HS300())
+        # LOOP.run_until_complete(turn_off_plugs_if_no_power_HS300(CONFIG.HS300_IP))
+        asyncio.run(turn_off_plugs_if_no_power_HS300(CONFIG.HS300_IP))
+        # LOOP.run_until_complete(turn_off_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS))
+        asyncio.run(turn_off_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS))
+        # LOOP.run_until_complete(power_off_radiator_HS300())
+        asyncio.run(power_off_radiator_HS300())
         return jsonify({"status": "success", "message": "poweroff success"}), 200
     except Exception as e:
         LOGGER.exception(f"power off error: {e}")
