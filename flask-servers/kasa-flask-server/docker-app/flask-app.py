@@ -51,7 +51,7 @@ def send_discord_message(message):
 
 async def get_metrics_HS300(ip: str) -> dict[Any, Any]:
     output_dict = {}
-    dev = await Device.connect(host=ip)
+    dev = await Device.connect(config=DeviceConfig(host=ip, timeout=10))
     try:
         await dev.update()
         for plug in dev.children:
@@ -68,7 +68,7 @@ async def get_metrics_HS300(ip: str) -> dict[Any, Any]:
 
 
 async def turn_off_plugs_if_no_power_HS300(ip: str) -> bool:
-    dev = await Device.connect(host=ip)
+    dev = await Device.connect(config=DeviceConfig(host=ip, timeout=10))
     try:
         await dev.update()
         for plug in dev.children:
