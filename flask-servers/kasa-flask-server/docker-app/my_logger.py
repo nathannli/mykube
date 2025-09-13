@@ -1,5 +1,8 @@
 import logging
 import sys
+from datetime import datetime
+
+from pytz import timezone
 
 
 class Logger:
@@ -7,6 +10,8 @@ class Logger:
         # Create a logger with a specific name instead of root logger
         self.logger = logging.getLogger(name)
         self.logger.setLevel(logging.INFO)  # or DEBUG for more details
+        self.tz = timezone("America/Toronto")  # UTC, America/Toronto, Europe/Berlin
+        logging.Formatter.converter = self.timetz
 
         # Prevent duplicate handlers
         if not self.logger.handlers:
@@ -26,8 +31,14 @@ class Logger:
         # Disable Flask's default logging to prevent duplicate logs (optional)
         logging.getLogger("werkzeug").disabled = True
 
+        self.logger.info("Logger initialized")
+        self.logger.info(f"Logger timezone: {self.tz.zone}")
+
     def get_logger(self):
         return self.logger
+
+    def timetz(self, *args):
+        return datetime.now(self.tz).timetuple()
 
 
 # Initialize logger instance
