@@ -1,3 +1,11 @@
+## [1.0.3] - 2025-09-13
+
+### 🚀 Features
+
+- *(kasa)* Increase timeout duration
+- *(kasa flask app)* Add timeouts to rest of the connects
+- *(kasa logger)* Change timezone to toronto
+- *(kasa kube deployment)* Update version
 ## [1.0.2] - 2025-09-12
 
 ### 🚀 Features
