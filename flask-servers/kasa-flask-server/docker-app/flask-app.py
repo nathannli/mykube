@@ -1,7 +1,6 @@
 import asyncio
 import re
 from typing import Any
-import atexit
 
 import requests
 from config import Config
@@ -92,8 +91,8 @@ async def turn_off_plugs_if_no_power_HS300(ip: str) -> bool:
     return True
 
 
-async def check_all_plugs_are_off_HS300(ip: str) -> bool:
-    dev = await Device.connect(host=ip)
+async def check_all_plugs_are_off_HS300() -> bool:
+    dev = await Device.connect(config=DeviceConfig(host=CONFIG.HS300_IP, timeout=10))
     try:
         await dev.update()
         for plug in dev.children:
@@ -102,7 +101,7 @@ async def check_all_plugs_are_off_HS300(ip: str) -> bool:
                     LOGGER.warning(f"Plug {plug.alias} is still on")
                     return False
     except Exception as e:
-        LOGGER.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+        LOGGER.error(f"IP: {CONFIG.HS300_IP} ------------ Got Nothing: error: {e}")
         return False
     finally:
         await dev.disconnect()
@@ -111,11 +110,9 @@ async def check_all_plugs_are_off_HS300(ip: str) -> bool:
 
 async def power_off_radiator_HS300() -> bool:
     plug_name: str = "Radiator"
-    dev = await Device.connect(host=CONFIG.HS300_IP)
-    all_plugs_are_off = await check_all_plugs_are_off_HS300(
-        CONFIG.HS300_IP
-    ) and await check_all_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
+    all_plugs_are_off = await check_all_plugs_are_off_HS300() and await check_all_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
     if all_plugs_are_off:
+        dev = await Device.connect(config=DeviceConfig(host=CONFIG.HS300_IP, timeout=10))
         try:
             await dev.update()
             for plug in dev.children:
@@ -194,6 +191,7 @@ async def get_metrics_KP125M(ip_list: list[str]) -> dict[Any, Any]:
                 username=CONFIG.KASA_USERNAME, password=CONFIG.KASA_PASSWORD
             ),
             connection_type=CONFIG.KASA_KP125M_DEVICE_CONNECT_PARAM,
+            timeout=10,
         )
         try:
             dev = await Device.connect(config=device_config)
