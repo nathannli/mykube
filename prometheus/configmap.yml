@@ -21,4 +21,8 @@ data:
       - job_name: '14ks_docker_kafka_broker_exporter'
         static_configs:
           - targets: ['195.168.1.102:9103','195.168.1.102:9104','195.168.1.102:9105']
+        
+      - job_name: '7950x_aquacomputer_highflow_node_exporter'
+        static_configs:
+          - targets: ['195.168.1.98:9100']
 
