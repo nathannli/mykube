@@ -1,3 +1,10 @@
+## [1.0.4] - 2025-09-19
+
+### 🚀 Features
+
+- *(kasa kube config map)* Add new ip
+- *(prometheus)* Add aquacomputer next flow scraper
+- *(prometheus)* Rm 14ks kafka metric scraper
 ## [1.0.3] - 2025-09-13
 
 ### 🚀 Features
