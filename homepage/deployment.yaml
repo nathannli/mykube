@@ -70,5 +70,5 @@ spec:
           emptyDir: {}
         - name: homepage-images
           hostPath:
-            path: /home/nathan/homepage/images
+            path: /home/nathan/data/personal/mykube/homepage/images
             type: Directory
