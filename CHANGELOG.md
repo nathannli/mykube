@@ -1,3 +1,10 @@
+## [1.0.5] - 2025-10-05
+
+### 🚀 Features
+
+- *(homepage)* Update image directory
+- *(homepage)* Update image directory
+- *(add worker node)* Readme
 ## [1.0.4] - 2025-09-19
 
 ### 🚀 Features
