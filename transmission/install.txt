@@ -1,3 +1,6 @@
-follow instruction from manual build on transmission github
-- don't download from release, clone from the link in the manual build instruction
-- default port 9091
+build-latest.sh:
+- clones latest tranmission build
+- copies into docker image
+- builds tranmission inside the docker image
+- rms src files
+- ~250 seconds
