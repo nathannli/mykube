@@ -25,34 +25,26 @@ data:
         - Homepage:
             - href: http://raspberrypifive.local
         - Prometheus:
-            - href: http://195.168.1.95:31090/
-              description: "http://raspberrypifive.local:31090/"
+            - href: http://10.0.0.8:31090/
         - Grafana:
-            - href: http://195.168.1.95:3000/
-              description: "http://raspberrypifive.local:3000/"
+            - href: http://10.0.0.8:3000/
         - Kubernetes-Dashboard:
-            - href: https://195.168.1.95:30558/
-              description: "https://raspberrypifive.local:30558/ generate token: kubectl -n kubernetes-dashboard create token admin-user"
+            - href: https://10.0.0.8:30558/
+              description: "generate token: kubectl -n kubernetes-dashboard create token admin-user"
         - Transmission:
-            - href: http://195.168.1.95:9091/
-              description: "http://raspberrypifive.local:9091/"
-        - Pfsense:
-            - href: https://195.168.1.1/
-              description: "https://pfsense.home.arpa/"
+            - href: http://10.0.0.8:9091/
         - 315NAS:
-            - href: http://195.168.1.61:8080
-              description: "315nas.local or http://195.168.1.61:8080"
+            - href: http://10.0.0.18:8080
         - nathanbook:
-            - href: http://195.168.1.106/
-              description: "nathanbook.local or http://195.168.1.106"
+            - href: http://10.0.0.71/
         - metabase-myfinance:
-            - href: http://195.168.1.95:30080/dashboard/2-nathan-finance?date=past1years~
+            - href: http://10.0.0.8:30080/dashboard/2-nathan-finance?date=past1years~
               description: "direct metabase link to your finance dashboard"
         - metabase-parentsfinance:
-            - href: http://195.168.1.95:30080/dashboard/4-parents-dashboard
+            - href: http://10.0.0.8:30080/dashboard/4-parents-dashboard
               description: "direct metabase link to parents finance dashboard"
         - xiaomi-router:
-            - href: http://195.168.1.52/
+            - href: http://10.0.0.140/
         - rogers-modem:
             - href: http://10.0.0.1/
 
