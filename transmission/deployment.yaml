@@ -29,8 +29,9 @@ spec:
             - containerPort: 51413     # Torrent traffic port
       volumes:
         - name: transmission-config
-          configMap:
-            name: transmission-settings
+          hostPath:
+            path: /home/nathan/github/mykube/transmission/config
+            type: Directory
         - name: transmission-downloads
           hostPath:
             path: /home/nathan/teamos/torrent-complete
