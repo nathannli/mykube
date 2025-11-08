@@ -1,3 +1,7 @@
 {
-  "rpc-whitelist": "10.0.0.*"
+  "rpc-whitelist": "127.0.0.1,10.0.0.*",
+  "download-dir": "/downloads",
+  "rpc-username": "admin",
+  "rpc-password": "admin",
+  "rpc-host-whitelist": "*"
 }
