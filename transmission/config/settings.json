@@ -1,9 +1,0 @@
-{
-  "bind-address-ipv4": "0.0.0.0",
-  "bind-address-ipv6": "::",
-  "rpc-bind-address": "0.0.0.0",
-  "rpc-enabled": false,
-  "rpc-whitelist": "*",
-  "download-dir": "/downloads",
-  "rpc-host-whitelist": "*"
-}

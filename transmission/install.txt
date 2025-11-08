@@ -1,6 +1,4 @@
-build-latest.sh:
-- clones latest tranmission build
-- copies into docker image
-- builds tranmission inside the docker image
-- rms src files
-- ~250 seconds
+https://github.com/transmission/transmission
+^ clone and build on device
+don't use kubernetes, deploy on metal
+for allowing ips, modify the service file and add `-a <ip address>`, ie: `-a 10.0.*.*`
