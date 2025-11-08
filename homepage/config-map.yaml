@@ -23,7 +23,7 @@ data:
   bookmarks.yaml: |
     - Shortcuts:
         - Homepage:
-            - href: http://raspberrypifive.local
+            - href: http://raspberrypi.local
         - Prometheus:
             - href: http://10.0.0.8:31090/
         - Grafana:
