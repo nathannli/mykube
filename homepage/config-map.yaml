@@ -29,7 +29,7 @@ data:
         - Grafana:
             - href: http://10.0.0.8:3000/
         - Kubernetes-Dashboard:
-            - href: https://10.0.0.8:30558/
+            - href: https://10.0.0.8:32260/
               description: "generate token: kubectl -n kubernetes-dashboard create token admin-user"
         - Transmission:
             - href: http://10.0.0.8:9091/
