@@ -1,24 +1,53 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: transmission
+  name: transmission-deployment
+  namespace: transmission
+  labels:
+    app: transmission
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transmission
+  template:
+    metadata:
+      labels:
+        app: transmission
+    spec:
+      containers:
+        - name: transmission-pod
+          image: nathannnli/mytransmission:v2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9091      # Web UI
+            - containerPort: 51413     # Torrent traffic port
+          volumeMounts:
+            - name: transmission-downloads
+              mountPath: /downloads
+            - name: transmission-config
+              mountPath: /config
+      volumes:
+        - name: transmission-config
+          persistentVolumeClaim:
+            claimName: transmission-config
+        - name: transmission-downloads
+          persistentVolumeClaim:
+            claimName: transmission-downloads
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: transmission-nodeport
   namespace: transmission
 spec:
-  containers:
-  - name: transmission
-    image: nathannnli/mytransmission:v1
-    ports:
-    - containerPort: 9091      # Web UI
-    - containerPort: 51413     # Torrent traffic port
-    volumeMounts:
-    - name: downloads
-      mountPath: /downloads    # This path inside container should be configured as download dir
-    - name: config
-      mountPath: /config       # Transmission config directory
-  volumes:
-  - name: downloads
-    hostPath:
-      path: /home/nathan/teamos/torrent-complete
-      type: Directory
-  - name: config
-    emptyDir: {}  # Or set up separate persistent config storage
+  selector:
+    app: transmission
+  ports:
+    - name: transmission-nodeport
+      protocol: TCP
+      port: 9091
+      targetPort: 9091
+      nodePort: 31091
+  type: NodePort

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION=v1
+VERSION=v2
 
 # Clone repo if not already present
 if [ ! -d "Transmission" ]; then
