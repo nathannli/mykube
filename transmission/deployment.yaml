@@ -29,8 +29,7 @@ spec:
               mountPath: /config
       volumes:
         - name: transmission-config
-          persistentVolumeClaim:
-            claimName: transmission-config
+          emptyDir: {}
         - name: transmission-downloads
           hostPath:
             path: /home/nathan/teamos/torrent-complete
