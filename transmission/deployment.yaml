@@ -19,17 +19,18 @@ spec:
         - name: transmission-pod
           image: nathannnli/mytransmission:v2
           imagePullPolicy: Always
+          volumeMounts:
+            - name: transmission-config
+              mountPath: /config
+            - name: transmission-downloads
+              mountPath: /downloads
           ports:
             - containerPort: 9091      # Web UI
             - containerPort: 51413     # Torrent traffic port
-          volumeMounts:
-            - name: transmission-downloads
-              mountPath: /downloads
-            - name: transmission-config
-              mountPath: /config
       volumes:
         - name: transmission-config
-          emptyDir: {}
+          configMap:
+            name: transmission-settings
         - name: transmission-downloads
           hostPath:
             path: /home/nathan/teamos/torrent-complete
