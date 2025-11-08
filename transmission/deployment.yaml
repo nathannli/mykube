@@ -32,8 +32,9 @@ spec:
           persistentVolumeClaim:
             claimName: transmission-config
         - name: transmission-downloads
-          persistentVolumeClaim:
-            claimName: transmission-downloads
+          hostPath:
+            path: /home/nathan/teamos/torrent-complete
+            type: Directory
 
 ---
 apiVersion: v1
