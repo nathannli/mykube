@@ -109,7 +109,7 @@ async def check_all_plugs_are_off_HS300() -> bool:
 
 
 async def power_off_radiator_HS300() -> bool:
-    plug_name: str = "Radiator"
+    plug_name: str = "radiator"
     all_plugs_are_off = await check_all_plugs_are_off_HS300() and await check_all_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
     if all_plugs_are_off:
         dev = await Device.connect(config=DeviceConfig(host=CONFIG.HS300_IP, timeout=10))
