@@ -30,7 +30,7 @@ spec:
         imagePullPolicy: Always
         env:
         - name: HOMEPAGE_ALLOWED_HOSTS
-          value: myhomepage.internal,195.168.1.7,195.168.1.6
+          value: myhomepage.internal,195.168.1.7:30081,195.168.1.6:30081
         ports:
         - name: http
           containerPort: 3000
