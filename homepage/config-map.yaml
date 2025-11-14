@@ -23,7 +23,7 @@ data:
   bookmarks.yaml: |
     - Shortcuts:
         - Homepage:
-            - href: http://raspberrypi.local
+            - href: http://195.168.1.7/
         - Prometheus:
             - href: http://195.168.1.7:31090/
         - Grafana:
