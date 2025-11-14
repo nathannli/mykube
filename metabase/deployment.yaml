@@ -14,27 +14,27 @@ spec:
         app: metabase
     spec:
       containers:
-        - name: metabase-container
-          image: metabase/metabase:v0.57.1.x
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 3000
-          env:
-            - name: MB_DB_TYPE
-              value: "postgres"
-            - name: MB_DB_DBNAME
-              value: "metabase"
-            - name: MB_DB_PORT
-              value: "5432"
-            - name: MB_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: metabase-secrets
-                  key: db-username
-            - name: MB_DB_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: metabase-secrets
-                  key: db-password
-            - name: MB_DB_HOST
-              value: "10.0.0.8"
+      - name: metabase-container
+        image: metabase/metabase:v0.57.1.x
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: MB_DB_TYPE
+          value: "postgres"
+        - name: MB_DB_DBNAME
+          value: "metabase"
+        - name: MB_DB_PORT
+          value: "5432"
+        - name: MB_DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: metabase-secrets
+              key: db-username
+        - name: MB_DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: metabase-secrets
+              key: db-password
+        - name: MB_DB_HOST
+          value: "195.165.1.7"
