@@ -25,31 +25,30 @@ data:
         - Homepage:
             - href: http://raspberrypi.local
         - Prometheus:
-            - href: http://10.0.0.8:31090/
+            - href: http://195.168.1.7:31090/
         - Grafana:
-            - href: http://10.0.0.8:3000/
+            - href: http://195.168.1.7:3000/
         - Kubernetes-Dashboard:
-            - href: https://10.0.0.8:32260/
+            - href: https://195.168.1.7:32260/
               description: "generate token: kubectl -n kubernetes-dashboard create token admin-user"
         - Transmission:
-            - href: http://10.0.0.8:9091/
+            - href: http://195.168.1.7:9091/
         - 315NAS:
-            - href: http://10.0.0.18:8080
+            - href: http://195.168.1.14:8080
         - nathanbook:
-            - href: http://10.0.0.71/
+            - href: http://195.168.1.12/
         - metabase-myfinance:
-            - href: http://10.0.0.8:30080/dashboard/2-nathan-finance?date=past1years~
+            - href: http://195.168.1.7:30080/dashboard/2-nathan-finance?date=past1years~
               description: "direct metabase link to your finance dashboard"
         - metabase-parentsfinance:
-            - href: http://10.0.0.8:30080/dashboard/4-parents-dashboard
+            - href: http://195.168.1.7:30080/dashboard/4-parents-dashboard
               description: "direct metabase link to parents finance dashboard"
         - xiaomi-router:
-            - href: http://10.0.0.140/
+            - href: http://195.168.1.13/
         - rogers-modem:
             - href: http://10.0.0.1/
 
-  services.yaml:
-    ""
+  services.yaml: ""
     # - My First Group:
     #     - My First Service:
     #         href: http://localhost/

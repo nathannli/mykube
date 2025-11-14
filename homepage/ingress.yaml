@@ -13,23 +13,13 @@ metadata:
   #   gethomepage.dev/name: Homepage
 spec:
   rules:
-    - host: "raspberrypifive.local"
-      http:
-        paths:
-          - path: "/"
-            pathType: Prefix
-            backend:
-              service:
-                name: homepage
-                port:
-                  number: 3000
-    - host: "raspberrypi.local"
-      http:
-        paths:
-          - path: "/"
-            pathType: Prefix
-            backend:
-              service:
-                name: homepage
-                port:
-                  number: 3000
+  - host: "myhomepage.internal"
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: homepage
+            port:
+              number: 3000
