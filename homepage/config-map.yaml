@@ -23,7 +23,7 @@ data:
   bookmarks.yaml: |
     - Shortcuts:
         - Homepage:
-            - href: http://195.168.1.7/
+            - href: http://195.168.1.7:30081/
         - Prometheus:
             - href: http://195.168.1.7:31090/
         - Grafana:
