@@ -18,6 +18,7 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: homepage
+        app: homepage
     spec:
       serviceAccountName: homepage
       automountServiceAccountToken: true
