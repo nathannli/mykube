@@ -37,4 +37,4 @@ spec:
               name: metabase-secrets
               key: db-password
         - name: MB_DB_HOST
-          value: "195.165.1.7"
+          value: "195.168.1.7"
