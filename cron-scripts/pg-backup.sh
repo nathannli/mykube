@@ -74,7 +74,8 @@ for DB_NAME in $MY_DB_NAME $PARENTS_DB_NAME; do
 
     # Check if upload was successful
     if [[ $? -eq 0 ]]; then
-        SUCCESS_MSG="✅ PostgreSQL Backup Success: $DB_NAME backed up to FTP ($BACKUP_FILE)"
+        LINE_COUNT=$(wc -l < "$BACKUP_DIR/$BACKUP_FILE")
+        SUCCESS_MSG="✅ PostgreSQL Backup Success: $DB_NAME backed up to FTP ($BACKUP_FILE, $LINE_COUNT lines)"
         echo "$SUCCESS_MSG"
         send_discord_notification "$SUCCESS_MSG"
     else
