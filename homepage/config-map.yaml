@@ -24,6 +24,8 @@ data:
     - Shortcuts:
         - Homepage:
             - href: http://195.168.1.7:30081/
+        - OpnSense:
+            - href: http://195.168.1.1/
         - Prometheus:
             - href: http://195.168.1.7:31090/
         - Grafana:
