@@ -62,12 +62,15 @@ async def connect_to_kp125m_device(ip: str, timeout: int = 10, max_retries: int 
     for attempt in range(max_retries):
         try:
             return await Device.connect(config=device_config)
-        except TimeoutError as te:
-            if attempt < max_retries - 1:
-                LOGGER.warning(f"IP: {ip} - Timeout on attempt {attempt + 1}/{max_retries}, retrying in 10 seconds: {te}")
+        except (TimeoutError, Exception) as e:
+            # Check if it's a timeout-related error
+            is_timeout = isinstance(e, TimeoutError) or "TimeoutError" in str(e)
+            if is_timeout and attempt < max_retries - 1:
+                LOGGER.warning(f"IP: {ip} - Timeout on attempt {attempt + 1}/{max_retries}, retrying in 10 seconds: {e}")
                 await asyncio.sleep(10)
             else:
-                LOGGER.error(f"IP: {ip} - Failed after {max_retries} attempts: {te}")
+                if is_timeout:
+                    LOGGER.error(f"IP: {ip} - Failed after {max_retries} attempts: {e}")
                 raise
 
 
