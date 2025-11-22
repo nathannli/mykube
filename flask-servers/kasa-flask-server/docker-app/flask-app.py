@@ -48,6 +48,29 @@ def send_discord_message(message):
     requests.post(CONFIG.DISCORD_ALERT_BOT_URL, json=payload_dict)
 
 
+async def connect_to_kp125m_device(ip: str, timeout: int = 10, max_retries: int = 3) -> Device:
+    """Connect to a KP125M device with credentials, retrying on timeout."""
+    device_config = DeviceConfig(
+        host=ip,
+        credentials=Credentials(
+            username=CONFIG.KASA_USERNAME, password=CONFIG.KASA_PASSWORD
+        ),
+        connection_type=CONFIG.KASA_KP125M_DEVICE_CONNECT_PARAM,
+        timeout=timeout,
+    )
+
+    for attempt in range(max_retries):
+        try:
+            return await Device.connect(config=device_config)
+        except TimeoutError as te:
+            if attempt < max_retries - 1:
+                LOGGER.warning(f"IP: {ip} - Timeout on attempt {attempt + 1}/{max_retries}, retrying in 10 seconds: {te}")
+                await asyncio.sleep(10)
+            else:
+                LOGGER.error(f"IP: {ip} - Failed after {max_retries} attempts: {te}")
+                raise
+
+
 async def get_metrics_HS300(ip: str) -> dict[Any, Any]:
     output_dict = {}
     dev = await Device.connect(config=DeviceConfig(host=ip, timeout=10))
@@ -132,15 +155,7 @@ async def power_off_radiator_HS300() -> bool:
 
 async def check_all_plugs_are_off_KP125M(ip_list: list[str]) -> bool:
     for ip in ip_list:
-        device_config = DeviceConfig(
-            host=ip,
-            credentials=Credentials(
-                username=CONFIG.KASA_USERNAME, password=CONFIG.KASA_PASSWORD
-            ),
-            connection_type=CONFIG.KASA_KP125M_DEVICE_CONNECT_PARAM,
-            timeout=10,
-        )
-        dev = await Device.connect(config=device_config)
+        dev = await connect_to_kp125m_device(ip)
         try:
             await dev.update()
             if dev.alias not in CONFIG.DO_NOT_TURN_OFF_LIST and dev.is_on:
@@ -156,14 +171,7 @@ async def check_all_plugs_are_off_KP125M(ip_list: list[str]) -> bool:
 
 async def turn_off_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
     for ip in ip_list:
-        device_config = DeviceConfig(
-            host=ip,
-            credentials=Credentials(
-                username=CONFIG.KASA_USERNAME, password=CONFIG.KASA_PASSWORD
-            ),
-            connection_type=CONFIG.KASA_KP125M_DEVICE_CONNECT_PARAM,
-        )
-        dev = await Device.connect(config=device_config)
+        dev = await connect_to_kp125m_device(ip)
         try:
             await dev.update()
             if dev.alias not in CONFIG.DO_NOT_TURN_OFF_LIST and dev.is_on:
@@ -172,7 +180,7 @@ async def turn_off_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
                     await dev.turn_off()
                     send_discord_message(f"Plug {dev.alias} turned off")
                 else:
-                    LOGGER.error(f"Plug {dev.alias} is still on")
+                    LOGGER.warning(f"Plug {dev.alias} is still on")
                     return False
         except Exception as e:
             LOGGER.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
@@ -185,16 +193,8 @@ async def turn_off_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
 async def get_metrics_KP125M(ip_list: list[str]) -> dict[Any, Any]:
     output_dict = {}
     for ip in ip_list:
-        device_config = DeviceConfig(
-            host=ip,
-            credentials=Credentials(
-                username=CONFIG.KASA_USERNAME, password=CONFIG.KASA_PASSWORD
-            ),
-            connection_type=CONFIG.KASA_KP125M_DEVICE_CONNECT_PARAM,
-            timeout=10,
-        )
         try:
-            dev = await Device.connect(config=device_config)
+            dev = await connect_to_kp125m_device(ip)
         except _ConnectionError as ce:
             LOGGER.error(f"IP: {ip} ------------ Connection Error: {ce}")
             continue
