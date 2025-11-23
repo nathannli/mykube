@@ -1,4 +1,5 @@
 #!/bin/bash
+source ./pg-backup.env
 
 # Function to send Discord notification
 send_discord_notification() {
