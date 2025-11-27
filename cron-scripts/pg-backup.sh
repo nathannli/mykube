@@ -1,5 +1,5 @@
 #!/bin/bash
-source ./pg-backup.env
+source ~/github/mykube/cron-scripts/pg-backup.env
 
 # Function to send Discord notification
 send_discord_notification() {
