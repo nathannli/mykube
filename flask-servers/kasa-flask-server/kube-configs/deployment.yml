@@ -14,32 +14,32 @@ spec:
         app: kasa-flask-server-exporter
     spec:
       containers:
-        - name: kasa-flask-server-exporter
-          image: nathannnli/mykasa:v50
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 9101
-          env:
-            - name: HS300_IP
-              valueFrom:
-                configMapKeyRef:
-                  name: kasa-config
-                  key: HS300_IP
-            - name: KP125M_IPS
-              valueFrom:
-                configMapKeyRef:
-                  name: kasa-config
-                  key: KP125M_IPS
-            - name: KASA_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: kasa-secrets
-                  key: username
-            - name: KASA_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: kasa-secrets
-                  key: password
+      - name: kasa-flask-server-exporter
+        image: nathannnli/mykasa:v51
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9101
+        env:
+        - name: HS300_IP
+          valueFrom:
+            configMapKeyRef:
+              name: kasa-config
+              key: HS300_IP
+        - name: KP125M_IPS
+          valueFrom:
+            configMapKeyRef:
+              name: kasa-config
+              key: KP125M_IPS
+        - name: KASA_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: kasa-secrets
+              key: username
+        - name: KASA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: kasa-secrets
+              key: password
 ---
 apiVersion: v1
 kind: Service
@@ -50,8 +50,8 @@ spec:
   selector:
     app: kasa-flask-server-exporter
   ports:
-    - port: 9101
-      targetPort: 9101
+  - port: 9101
+    targetPort: 9101
 ---
 apiVersion: v1
 kind: Service
@@ -62,9 +62,9 @@ spec:
   selector:
     app: kasa-flask-server-exporter
   ports:
-    - name: kasa-flask-server-exporter-nodeport
-      protocol: TCP
-      port: 9101
-      targetPort: 9101
-      nodePort: 30101
+  - name: kasa-flask-server-exporter-nodeport
+    protocol: TCP
+    port: 9101
+    targetPort: 9101
+    nodePort: 30101
   type: NodePort
