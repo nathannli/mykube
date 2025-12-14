@@ -21,7 +21,7 @@ class Config:
     )
 
     HS300_DEVICE_NAME_LIST = ["13k", "14kf", "9950x", "radiator", "alienware", "285k"]
-    DO_NOT_TURN_OFF_LIST = ["radiator", "alienware", "odyssey-g9-57", "macmini", "Sound"]
+    DO_NOT_TURN_OFF_LIST = ["radiator", "alienware", "odyssey-g9-57", "macmini", "Sound", "9600k_beryl"]
 
     LOW_POWER_THRESHOLD_WATTS = 5
 

@@ -25,18 +25,6 @@ LOGGER = Logger().get_logger()
 
 app = Flask(__name__)
 
-# create shared event loop
-# LOOP = asyncio.new_event_loop()
-# asyncio.set_event_loop(LOOP)
-
-
-# @atexit.register
-# def shutdown_event_loop():
-#     LOGGER.info("Shutting down event loop")
-#     LOOP.stop()
-#     LOOP.close()
-#     LOGGER.info("Event loop closed")
-
 
 def obscure_credentials(message):
     # Regex to find URLs with credentials: scheme://username:password@host/...
