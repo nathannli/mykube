@@ -28,3 +28,6 @@ class Config:
 
     # discord msg alerts
     DISCORD_ALERT_BOT_URL = "http://discord-general-channel-alert-bot-node-port.discord-bots.svc.cluster.local:5000/alert"
+
+    def __repr__(self):
+        return f"Config(HS300_IP={self.HS300_IP}, KP125M_IPS={self.KP125M_IPS}, KP125M_SOUND_IP={self.KP125M_SOUND_IP})"

@@ -21,6 +21,7 @@ from prometheus_client import (
 )
 
 CONFIG = Config()
+print(CONFIG)
 LOGGER = Logger().get_logger()
 
 app = Flask(__name__)
