@@ -123,6 +123,10 @@ async def check_all_plugs_are_off_HS300() -> bool:
 
 
 async def power_off_radiator_HS300() -> bool:
+    """
+    powers off radiator plug if all other plugs are off
+    and powers off Sound plug if the above is true
+    """
     plug_name: str = "radiator"
     all_plugs_are_off = await check_all_plugs_are_off_HS300() and await check_all_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
     if all_plugs_are_off:
@@ -179,6 +183,27 @@ async def turn_off_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
         finally:
             await dev.disconnect()
     return True
+
+
+async def power_off_sound_KP125M(ip: str) -> bool:
+    """
+    return true if off
+    return false if error or still on
+    """
+    dev = await connect_to_kp125m_device(ip)
+    try:
+        await dev.update()
+        if dev.alias.lower() == "sound" and dev.is_on:
+            await dev.turn_off()
+            send_discord_message(f"Plug {dev.alias} turned off")
+            return True
+        return True
+    except Exception as e:
+        LOGGER.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+        return False
+    finally:
+        await dev.disconnect()
+    return False
 
 
 async def get_metrics_KP125M(ip_list: list[str]) -> dict[Any, Any]:
@@ -249,7 +274,9 @@ def trigger_power_off():
         # LOOP.run_until_complete(turn_off_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS))
         asyncio.run(turn_off_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS))
         # LOOP.run_until_complete(power_off_radiator_HS300())
-        asyncio.run(power_off_radiator_HS300())
+        result = asyncio.run(power_off_radiator_HS300())
+        if result:
+            asyncio.run(power_off_sound_KP125M(CONFIG.KP125M_SOUND_IP))
         return jsonify({"status": "success", "message": "poweroff success"}), 200
     except Exception as e:
         LOGGER.exception(f"power off error: {e}")

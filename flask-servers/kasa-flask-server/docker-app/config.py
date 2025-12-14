@@ -8,6 +8,7 @@ class Config:
     HS300_IP: str = os.getenv("HS300_IP")
     KP125M_IPS_RAW: str = os.getenv("KP125M_IPS")
     KP125M_IPS: list[str] = [x.strip() for x in KP125M_IPS_RAW.split('-') if x != '']
+    KP125M_SOUND_IP: str = os.getenv("KP125M_SOUND_IP")
     NAME = "kasapower"
     KASA_USERNAME = os.getenv("KASA_USERNAME")
     KASA_PASSWORD = os.getenv("KASA_PASSWORD")
