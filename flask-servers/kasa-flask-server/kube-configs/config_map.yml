@@ -5,7 +5,7 @@ metadata:
   namespace: kasa-flask-server
 data:
   HS300_IP: "195.168.1.226"
-  KP125M_SOUND_IP: "195.168.1.193"
+  KP125M_SOUND_IP: "195.168.1.110"
   KP125M_IPS: |
     - 195.168.1.219
     - 195.168.1.127
