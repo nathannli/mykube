@@ -1,3 +1,15 @@
+## [1.0.7] - 2025-12-22
+
+### 🚀 Features
+
+- *(kasa flask app)* Add time of use electricity gauge
+- *(kasa flask app)* Add time of use electricity in dockerfile
+- *(kasa flask app)* Add tests and prints
+- *(kasa flask app)* Explicitly define timezone
+- *(prometheus)* Enable admin api
+- *(prometheus)* Add scripts
+- *(kasa flask app)* Explicitly define timezone for more
+- *(kasa flask app)* V63
 ## [1.0.6] - 2025-12-22
 
 ### 🚀 Features
