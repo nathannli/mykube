@@ -1,0 +1,8 @@
+project-includes = [
+    "**/*.py*",
+    "**/*.ipynb",
+]
+
+search-path = [
+    "flask-servers/kasa-flask-server/docker-app"
+]

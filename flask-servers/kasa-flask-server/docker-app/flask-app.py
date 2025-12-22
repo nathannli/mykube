@@ -19,10 +19,12 @@ from prometheus_client import (
     Gauge,
     generate_latest,
 )
+from time_of_use_electricity_pricing import TimeOfUseElectricityPricing
 
 CONFIG = Config()
 print(CONFIG)
 LOGGER = Logger().get_logger()
+TOU_PRICING = TimeOfUseElectricityPricing()
 
 app = Flask(__name__)
 
@@ -240,32 +242,39 @@ def metrics():
     # Run asyncio task inside Flask
     hs300_data = {}
     kp125m_data = {}
+
     try:
-        # hs300_data = LOOP.run_until_complete(get_metrics_HS300(CONFIG.HS300_IP))
         hs300_data = asyncio.run(get_metrics_HS300(CONFIG.HS300_IP))
     except Exception as e:
         LOGGER.error(f"Error in metrics route from get_metrics_HS300: {e}")
     try:
-        # kp125m_data = LOOP.run_until_complete(get_metrics_KP125M(CONFIG.KP125M_IPS))
         kp125m_data = asyncio.run(get_metrics_KP125M(CONFIG.KP125M_IPS))
-        data = {**hs300_data, **kp125m_data}
-        g = Gauge(
-            name=CONFIG.NAME,
-            documentation="Power consumption in watts for each device",
-            labelnames=["device"],
-            unit="watts",
-            registry=registry,
-        )
-        for key, value in data.items():
-            g.labels(device=key).set(value)
-        return generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
     except Exception as e:
-        LOGGER.error(f"Error in metrics: {e}")
-        return (
-            "there was an error in the flask app",
-            500,
-            {"Content-Type": CONTENT_TYPE_LATEST},
-        )
+        LOGGER.error(f"Error in metrics route from get_metrics_KP125M: {e}")
+
+    data = {**hs300_data, **kp125m_data}
+
+    # gauge for devices
+    g = Gauge(
+        name=CONFIG.NAME,
+        documentation="Power consumption in watts for each device",
+        labelnames=["device"],
+        unit="watts",
+        registry=registry,
+    )
+    for key, value in data.items():
+        g.labels(device=key).set(value)
+
+    # Gauge for electricity price
+    price_gauge = Gauge(
+        name="electricity_price",
+        documentation="Current electricity price in CAD per kWh",
+        registry=registry,
+    )
+    price_gauge.set(TOU_PRICING.get_current_price())
+
+    return generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
+    
 
 
 @app.route("/poweroff", methods=["POST"])
