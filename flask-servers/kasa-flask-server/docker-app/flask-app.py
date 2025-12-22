@@ -24,7 +24,7 @@ from time_of_use_electricity_pricing import TimeOfUseElectricityPricing
 CONFIG = Config()
 print(CONFIG)
 LOGGER = Logger().get_logger()
-TOU_PRICING = TimeOfUseElectricityPricing()
+TOU_PRICING = TimeOfUseElectricityPricing(logger=LOGGER)
 
 app = Flask(__name__)
 
@@ -271,6 +271,7 @@ def metrics():
         registry=registry,
     )
     price_gauge.set(TOU_PRICING.get_current_price())
+    LOGGER.info(TOU_PRICING)
 
     return generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
     

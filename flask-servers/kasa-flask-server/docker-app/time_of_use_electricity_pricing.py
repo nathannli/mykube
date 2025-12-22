@@ -50,3 +50,14 @@ class TimeOfUseElectricityPricing:
         season = WINTER if self.is_winter() else SUMMER
         day_type = WEEKDAY if self.is_weekday() else WEEKEND
         return self.pricing[season][day_type][cur_hour]
+
+    def __repr__(self):
+        str_builder = f"""
+            get_winter_pricing_date_start: {self.get_winter_pricing_date_start()}\n
+            get_winter_pricing_date_end: {self.get_winter_pricing_date_end()}\n
+            is_winter: {self.is_winter()}\n
+            is_weekday: {self.is_weekday()}\n
+            get_current_price: {self.get_current_price()}
+        """
+        return str_builder
+

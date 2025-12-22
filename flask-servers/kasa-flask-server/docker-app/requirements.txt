@@ -1,7 +1,8 @@
-python-kasa 
+python-kasa
 prometheus_client
 flask
 requests
 anyio
 tzdata
 pytz
+pytest
