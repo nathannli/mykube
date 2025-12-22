@@ -24,7 +24,7 @@ from time_of_use_electricity_pricing import TimeOfUseElectricityPricing
 CONFIG = Config()
 print(CONFIG)
 LOGGER = Logger().get_logger()
-TOU_PRICING = TimeOfUseElectricityPricing(logger=LOGGER)
+TOU_PRICING = TimeOfUseElectricityPricing()
 
 app = Flask(__name__)
 
