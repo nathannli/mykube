@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 WEEKDAY = "weekday"
 WEEKEND = "weekend"
@@ -9,6 +10,8 @@ class TimeOfUseElectricityPricing:
     """
     main usage function: get_current_price
     """
+
+    toronto_tz = ZoneInfo("America/Toronto")
 
     pricing: dict[str, dict[str, dict[int, float]]] = {
         WINTER: {
@@ -33,26 +36,29 @@ class TimeOfUseElectricityPricing:
         }
     }
 
+    def get_now(self):
+        return datetime.now(tz=self.toronto_tz)
+
     def get_winter_pricing_date_start(self) -> datetime:
-        return datetime(year=datetime.now().year, month=11, day=1)
+        return datetime(year=self.get_now().year, month=11, day=1)
 
     def get_winter_pricing_date_end(self) -> datetime:
-        return datetime(year=datetime.now().year + 1, month=4, day=30)
+        return datetime(year=self.get_now().year + 1, month=4, day=30)
     
     def is_winter(self) -> bool:
-        return self.get_winter_pricing_date_start() <= datetime.now() <= self.get_winter_pricing_date_end()
+        return self.get_winter_pricing_date_start() <= self.get_now() <= self.get_winter_pricing_date_end()
 
     def is_weekday(self) -> bool:
-        return datetime.now().weekday() < 5
+        return self.get_now().weekday() < 5
 
     def get_current_price(self) -> float:
-        cur_hour: int = datetime.now().hour
+        cur_hour: int = self.get_now().hour
         season = WINTER if self.is_winter() else SUMMER
         day_type = WEEKDAY if self.is_weekday() else WEEKEND
         return self.pricing[season][day_type][cur_hour]
 
     def __repr__(self):
-        cur_hour: int = datetime.now().hour
+        cur_hour: int = self.get_now().hour
         season = WINTER if self.is_winter() else SUMMER
         day_type = WEEKDAY if self.is_weekday() else WEEKEND
         str_builder = f"""
