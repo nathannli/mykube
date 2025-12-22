@@ -11,3 +11,8 @@ then copy the .kube/config file and replace the localhost with the master ip
 
 # changelog
 You can find the changelog [here](./CHANGELOG.md).
+
+## how to
+`git cliff --unreleased --tag v1.0.7 --prepend CHANGELOG.md`
+`gc -m "docs: add changelog for v1.0.7"`
+`gt 1.0.7`
