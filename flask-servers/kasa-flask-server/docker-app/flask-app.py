@@ -193,7 +193,6 @@ async def power_off_sound_KP125M(ip: str) -> bool:
     return true if off
     return false if error or still on
     """
-    LOGGER.info(f"Powering off Sound KP125M at IP: {ip}")
     dev = await connect_to_kp125m_device(ip)
     try:
         await dev.update()
