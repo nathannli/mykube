@@ -1,10 +1,27 @@
-from datetime import datetime
 from zoneinfo import ZoneInfo
+from datetime import datetime
 
 WEEKDAY = "weekday"
 WEEKEND = "weekend"
 WINTER = "winter"
 SUMMER = "summer"
+
+HOLIDAY_DATES = [
+    # 2025
+    datetime(year=2025, month=12, day=25, tzinfo=ZoneInfo("America/Toronto")),  # Christmas Day
+    datetime(year=2025, month=12, day=26, tzinfo=ZoneInfo("America/Toronto")),  # Boxing Day
+    # 2026
+    datetime(year=2026, month=1, day=1, tzinfo=ZoneInfo("America/Toronto")),    # New Year's Day
+    datetime(year=2026, month=2, day=16, tzinfo=ZoneInfo("America/Toronto")),   # Family Day
+    datetime(year=2026, month=4, day=3, tzinfo=ZoneInfo("America/Toronto")),    # Good Friday
+    datetime(year=2026, month=5, day=18, tzinfo=ZoneInfo("America/Toronto")),   # Victoria Day
+    datetime(year=2026, month=7, day=1, tzinfo=ZoneInfo("America/Toronto")),    # Canada Day
+    datetime(year=2026, month=8, day=3, tzinfo=ZoneInfo("America/Toronto")),    # Civic Holiday
+    datetime(year=2026, month=9, day=7, tzinfo=ZoneInfo("America/Toronto")),    # Labour Day
+    datetime(year=2026, month=10, day=12, tzinfo=ZoneInfo("America/Toronto")),  # Thanksgiving Day
+    datetime(year=2026, month=12, day=25, tzinfo=ZoneInfo("America/Toronto")),  # Christmas Day
+    datetime(year=2026, month=12, day=28, tzinfo=ZoneInfo("America/Toronto")),  # Boxing Day
+]
 
 class TimeOfUseElectricityPricing:
     """
@@ -54,7 +71,7 @@ class TimeOfUseElectricityPricing:
     def get_current_price(self) -> float:
         cur_hour: int = self.get_now().hour
         season = WINTER if self.is_winter() else SUMMER
-        day_type = WEEKDAY if self.is_weekday() else WEEKEND
+        day_type = WEEKDAY if self.is_weekday() and self.get_now() not in HOLIDAY_DATES else WEEKEND
         return self.pricing[season][day_type][cur_hour]
 
     def __repr__(self):
