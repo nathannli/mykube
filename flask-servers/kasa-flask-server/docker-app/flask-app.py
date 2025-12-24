@@ -287,7 +287,7 @@ def metrics():
         registry=registry,
     )
     price_gauge.set(TOU_PRICING.get_current_price())
-    LOGGER.info(TOU_PRICING)
+    # LOGGER.info(TOU_PRICING)
 
     return generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
     
