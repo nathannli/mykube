@@ -3,15 +3,22 @@ import os
 from kasa import DeviceConnectionParameters, DeviceEncryptionType, DeviceFamily
 
 
+def require_env(name: str) -> str:
+    value = os.getenv(name)
+    if value is None:
+        raise RuntimeError(f"{name} environment variable is not set")
+    return value
+
+
 class Config:
     # user config
-    HS300_IP: str = os.getenv("HS300_IP")
-    KP125M_SOUND_IP: str = os.getenv("KP125M_SOUND_IP")
-    KP125M_IPS_RAW: str = os.getenv("KP125M_IPS")
+    HS300_IP: str = require_env("HS300_IP")
+    KP125M_SOUND_IP: str = require_env("KP125M_SOUND_IP")
+    KP125M_IPS_RAW: str = require_env("KP125M_IPS")
     KP125M_IPS: list[str] = [x.strip() for x in KP125M_IPS_RAW.split('-') if x != '']
     NAME = "kasapower"
-    KASA_USERNAME = os.getenv("KASA_USERNAME")
-    KASA_PASSWORD = os.getenv("KASA_PASSWORD")
+    KASA_USERNAME = require_env("KASA_USERNAME")
+    KASA_PASSWORD = require_env("KASA_PASSWORD")
 
     KASA_KP125M_DEVICE_CONNECT_PARAM = DeviceConnectionParameters(
         device_family=DeviceFamily.SmartKasaPlug,
