@@ -1,5 +1,6 @@
 import asyncio
 import re
+from contextlib import asynccontextmanager
 from typing import Any
 
 import requests
@@ -22,21 +23,53 @@ from prometheus_client import (
 from time_of_use_electricity_pricing import TimeOfUseElectricityPricing
 
 CONFIG = Config()
-print(CONFIG)
 LOGGER = Logger().get_logger()
+LOGGER.info(f"Loaded config: {CONFIG}")
 TOU_PRICING = TimeOfUseElectricityPricing()
 
 app = Flask(__name__)
 
 
-def obscure_credentials(message):
+def obscure_credentials(message: str) -> str:
     # Regex to find URLs with credentials: scheme://username:password@host/...
     return re.sub(r"(ftp://)([^:/\s]+):([^@/\s]+)@", r"\1nnn:nnn@", message)
 
 
-def send_discord_message(message):
-    payload_dict = {"message": obscure_credentials(message)}
-    requests.post(CONFIG.DISCORD_ALERT_BOT_URL, json=payload_dict)
+async def send_discord_message(message: str) -> None:
+    """Send a message to Discord webhook asynchronously with error handling."""
+    try:
+        payload_dict = {"message": obscure_credentials(message)}
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(
+            None,
+            lambda: requests.post(CONFIG.DISCORD_ALERT_BOT_URL, json=payload_dict, timeout=5)
+        )
+    except Exception as e:
+        LOGGER.error(f"Failed to send Discord message: {e}")
+
+
+def should_manage_plug(plug: Any) -> bool:
+    """Check if plug should be managed (turned off/monitored)."""
+    return plug.alias is not None and plug.alias not in CONFIG.DO_NOT_TURN_OFF_LIST
+
+
+def log_device_error(ip: str, error: Exception, context: str = "Got Nothing"):
+    """Log device-related errors with consistent formatting."""
+    LOGGER.error(f"IP: {ip} ------------ {context}: error: {error}")
+
+
+async def connect_to_device(device_config: DeviceConfig, ip: str, max_retries: int = 3) -> Device:
+    """Connect to a device with retry logic."""
+    for attempt in range(max_retries):
+        try:
+            return await Device.connect(config=device_config)
+        except (TimeoutError, OSError, _ConnectionError) as e:
+            if attempt < max_retries - 1:
+                LOGGER.warning(f"IP: {ip} - Connection error on attempt {attempt + 1}/{max_retries}, retrying in 10 seconds: {e}")
+                await asyncio.sleep(10)
+            else:
+                LOGGER.error(f"IP: {ip} - Failed after {max_retries} attempts: {e}")
+                raise
 
 
 async def connect_to_kp125m_device(ip: str, timeout: int = 10, max_retries: int = 3) -> Device:
@@ -49,99 +82,77 @@ async def connect_to_kp125m_device(ip: str, timeout: int = 10, max_retries: int 
         connection_type=CONFIG.KASA_KP125M_DEVICE_CONNECT_PARAM,
         timeout=timeout,
     )
-
-    for attempt in range(max_retries):
-        try:
-            return await Device.connect(config=device_config)
-        except (TimeoutError, Exception) as e:
-            # Check if it's a timeout-related error
-            is_timeout = isinstance(e, TimeoutError) or "TimeoutError" in str(e)
-            if is_timeout and attempt < max_retries - 1:
-                LOGGER.warning(f"IP: {ip} - Timeout on attempt {attempt + 1}/{max_retries}, retrying in 10 seconds: {e}")
-                await asyncio.sleep(10)
-            else:
-                if is_timeout:
-                    LOGGER.error(f"IP: {ip} - Failed after {max_retries} attempts: {e}")
-                raise
+    return await connect_to_device(device_config, ip, max_retries)
 
 
 async def connect_to_hs300_device(ip: str, timeout: int = 10, max_retries: int = 3) -> Device:
     """Connect to an HS300 device, retrying on timeout."""
     device_config = DeviceConfig(host=ip, timeout=timeout)
+    return await connect_to_device(device_config, ip, max_retries)
 
-    for attempt in range(max_retries):
-        try:
-            return await Device.connect(config=device_config)
-        except (TimeoutError, Exception) as e:
-            # Check if it's a timeout-related error
-            is_timeout = isinstance(e, TimeoutError) or "TimeoutError" in str(e)
-            if is_timeout and attempt < max_retries - 1:
-                LOGGER.warning(f"IP: {ip} - Timeout on attempt {attempt + 1}/{max_retries}, retrying in 10 seconds: {e}")
-                await asyncio.sleep(10)
-            else:
-                if is_timeout:
-                    LOGGER.error(f"IP: {ip} - Failed after {max_retries} attempts: {e}")
-                raise
+
+@asynccontextmanager
+async def managed_device_connection(connect_func, *args, **kwargs):
+    """Context manager for device connections with automatic disconnect."""
+    dev = await connect_func(*args, **kwargs)
+    try:
+        await dev.update()
+        yield dev
+    finally:
+        await dev.disconnect()
 
 
 async def get_metrics_HS300(ip: str) -> dict[Any, Any]:
     output_dict = {}
-    dev = await connect_to_hs300_device(ip)
     try:
-        await dev.update()
-        for plug in dev.children:
-            plug_name: str = plug.alias
-            energy = plug.modules[Module.Energy]
-            energy_consumption: int = energy.current_consumption
-            output_dict[plug_name] = energy_consumption
+        async with managed_device_connection(connect_to_hs300_device, ip) as dev:
+            for plug in dev.children:
+                plug_name = plug.alias
+                if plug_name is not None:
+                    energy = plug.modules[Module.Energy]
+                    energy_consumption = energy.current_consumption
+                    if energy_consumption is not None:
+                        output_dict[plug_name] = int(energy_consumption)
         return output_dict
     except Exception as e:
-        LOGGER.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+        log_device_error(ip, e)
         raise e
-    finally:
-        await dev.disconnect()
 
 
 async def turn_off_plugs_if_no_power_HS300(ip: str) -> bool:
-    dev = await connect_to_hs300_device(ip)
     try:
-        await dev.update()
-        for plug in dev.children:
-            if plug.alias is not None and plug.alias not in CONFIG.DO_NOT_TURN_OFF_LIST:
-                if plug.is_on:
-                    plug_energy = plug.modules[Module.Energy]
-                    if (
-                        plug_energy.current_consumption
-                        < CONFIG.LOW_POWER_THRESHOLD_WATTS
-                    ):
-                        await plug.turn_off()
-                        send_discord_message(f"Plug {plug.alias} turned off")
-                    else:
-                        LOGGER.warning(f"Plug {plug.alias} is still on")
-                        return False
+        async with managed_device_connection(connect_to_hs300_device, ip) as dev:
+            for plug in dev.children:
+                if should_manage_plug(plug):
+                    if plug.is_on:
+                        plug_energy = plug.modules[Module.Energy]
+                        if (
+                            plug_energy.current_consumption
+                            < CONFIG.LOW_POWER_THRESHOLD_WATTS
+                        ):
+                            await plug.turn_off()
+                            await send_discord_message(f"Plug {plug.alias} turned off")
+                        else:
+                            LOGGER.warning(f"Plug {plug.alias} is still on")
+                            return False
+        return True
     except Exception as e:
-        LOGGER.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+        log_device_error(ip, e)
         return False
-    finally:
-        await dev.disconnect()
-    return True
 
 
 async def check_all_plugs_are_off_HS300() -> bool:
-    dev = await connect_to_hs300_device(CONFIG.HS300_IP)
     try:
-        await dev.update()
-        for plug in dev.children:
-            if plug.alias is not None and plug.alias not in CONFIG.DO_NOT_TURN_OFF_LIST:
-                if plug.is_on:
-                    LOGGER.warning(f"Plug {plug.alias} is still on")
-                    return False
+        async with managed_device_connection(connect_to_hs300_device, CONFIG.HS300_IP) as dev:
+            for plug in dev.children:
+                if should_manage_plug(plug):
+                    if plug.is_on:
+                        LOGGER.warning(f"Plug {plug.alias} is still on")
+                        return False
+        return True
     except Exception as e:
-        LOGGER.error(f"IP: {CONFIG.HS300_IP} ------------ Got Nothing: error: {e}")
+        log_device_error(CONFIG.HS300_IP, e)
         return False
-    finally:
-        await dev.disconnect()
-    return True
 
 
 async def power_off_radiator_HS300() -> bool:
@@ -152,19 +163,18 @@ async def power_off_radiator_HS300() -> bool:
     plug_name: str = "radiator"
     all_plugs_are_off = await check_all_plugs_are_off_HS300() and await check_all_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
     if all_plugs_are_off:
-        dev = await connect_to_hs300_device(CONFIG.HS300_IP)
         try:
-            await dev.update()
-            for plug in dev.children:
-                if plug.alias is not None and plug.alias.lower() == plug_name.lower():
-                    if plug.is_on:
-                        await plug.turn_off()
-                        send_discord_message(f"Plug {plug.alias} turned off")
-                    return True
-            LOGGER.warning(f"Plug {plug_name} not found")
-            return False
+            async with managed_device_connection(connect_to_hs300_device, CONFIG.HS300_IP) as dev:
+                for plug in dev.children:
+                    if plug.alias is not None and plug.alias.lower() == plug_name.lower():
+                        if plug.is_on:
+                            await plug.turn_off()
+                            await send_discord_message(f"Plug {plug.alias} turned off")
+                        return True
+                LOGGER.warning(f"Plug {plug_name} not found")
+                return False
         except Exception as e:
-            LOGGER.error(f"IP: {CONFIG.HS300_IP} ------------ Got Nothing: error: {e}")
+            log_device_error(CONFIG.HS300_IP, e)
             return False
     else:
         return False
@@ -172,38 +182,32 @@ async def power_off_radiator_HS300() -> bool:
 
 async def check_all_plugs_are_off_KP125M(ip_list: list[str]) -> bool:
     for ip in ip_list:
-        dev = await connect_to_kp125m_device(ip)
         try:
-            await dev.update()
-            if dev.alias not in CONFIG.DO_NOT_TURN_OFF_LIST and dev.is_on:
-                LOGGER.error(f"Plug {dev.alias} is still on")
-                return False
+            async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
+                if should_manage_plug(dev) and dev.is_on:
+                    LOGGER.error(f"Plug {dev.alias} is still on")
+                    return False
         except Exception as e:
-            LOGGER.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+            log_device_error(ip, e)
             return False
-        finally:
-            await dev.disconnect()
     return True
 
 
 async def turn_off_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
     for ip in ip_list:
-        dev = await connect_to_kp125m_device(ip)
         try:
-            await dev.update()
-            if dev.alias not in CONFIG.DO_NOT_TURN_OFF_LIST and dev.is_on:
-                device_energy = dev.modules[Module.Energy]
-                if device_energy.current_consumption < CONFIG.LOW_POWER_THRESHOLD_WATTS:
-                    await dev.turn_off()
-                    send_discord_message(f"Plug {dev.alias} turned off")
-                else:
-                    LOGGER.warning(f"Plug {dev.alias} is still on")
-                    return False
+            async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
+                if should_manage_plug(dev) and dev.is_on:
+                    device_energy = dev.modules[Module.Energy]
+                    if device_energy.current_consumption < CONFIG.LOW_POWER_THRESHOLD_WATTS:
+                        await dev.turn_off()
+                        await send_discord_message(f"Plug {dev.alias} turned off")
+                    else:
+                        LOGGER.warning(f"Plug {dev.alias} is still on")
+                        return False
         except Exception as e:
-            LOGGER.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+            log_device_error(ip, e)
             return False
-        finally:
-            await dev.disconnect()
     return True
 
 
@@ -212,44 +216,37 @@ async def power_off_sound_KP125M(ip: str) -> bool:
     return true if off
     return false if error or still on
     """
-    dev = await connect_to_kp125m_device(ip)
     try:
-        await dev.update()
-        if dev.alias.lower() == "sound" and dev.is_on:
-            await dev.turn_off()
-            send_discord_message(f"Plug {dev.alias} turned off")
-            return True
+        async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
+            if dev.alias and dev.alias.lower() == "sound" and dev.is_on:
+                await dev.turn_off()
+                await send_discord_message(f"Plug {dev.alias} turned off")
         return True
     except Exception as e:
-        LOGGER.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+        log_device_error(ip, e)
         return False
-    finally:
-        await dev.disconnect()
-    return False
 
 
 async def get_metrics_KP125M(ip_list: list[str]) -> dict[Any, Any]:
     output_dict = {}
     for ip in ip_list:
         try:
-            dev = await connect_to_kp125m_device(ip)
+            async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
+                device_alias = dev.alias
+                if device_alias is not None:
+                    energy = dev.modules[Module.Energy]
+                    energy_consumption = energy.current_consumption
+                    if energy_consumption is not None:
+                        output_dict[device_alias] = int(energy_consumption)
         except _ConnectionError as ce:
-            LOGGER.error(f"IP: {ip} ------------ Connection Error: {ce}")
+            log_device_error(ip, ce, "Connection Error")
             continue
         except TimeoutError as te:
-            LOGGER.error(f"IP: {ip} ------------ Timeout Error: {te}")
+            log_device_error(ip, te, "Timeout Error")
             continue
-        try:
-            await dev.update()
-            device_alias: str = dev.alias
-            energy = dev.modules[Module.Energy]
-            energy_consumption: int = energy.current_consumption
-            output_dict[device_alias] = energy_consumption
         except Exception as e:
-            LOGGER.error(f"IP: {ip} ------------ Got Nothing: error: {e}")
+            log_device_error(ip, e)
             raise e
-        finally:
-            await dev.disconnect()
     return output_dict
 
 
@@ -296,17 +293,19 @@ def metrics():
     
 
 
+async def trigger_power_off_async():
+    """Execute power off sequence for all devices."""
+    await turn_off_plugs_if_no_power_HS300(CONFIG.HS300_IP)
+    await turn_off_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS)
+    result = await power_off_radiator_HS300()
+    if result:
+        await power_off_sound_KP125M(CONFIG.KP125M_SOUND_IP)
+
+
 @app.route("/poweroff", methods=["POST"])
 def trigger_power_off():
     try:
-        # LOOP.run_until_complete(turn_off_plugs_if_no_power_HS300(CONFIG.HS300_IP))
-        asyncio.run(turn_off_plugs_if_no_power_HS300(CONFIG.HS300_IP))
-        # LOOP.run_until_complete(turn_off_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS))
-        asyncio.run(turn_off_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS))
-        # LOOP.run_until_complete(power_off_radiator_HS300())
-        result = asyncio.run(power_off_radiator_HS300())
-        if result:
-            asyncio.run(power_off_sound_KP125M(CONFIG.KP125M_SOUND_IP))
+        asyncio.run(trigger_power_off_async())
         return jsonify({"status": "success", "message": "poweroff success"}), 200
     except Exception as e:
         LOGGER.exception(f"power off error: {e}")
