@@ -65,9 +65,28 @@ async def connect_to_kp125m_device(ip: str, timeout: int = 10, max_retries: int 
                 raise
 
 
+async def connect_to_hs300_device(ip: str, timeout: int = 10, max_retries: int = 3) -> Device:
+    """Connect to an HS300 device, retrying on timeout."""
+    device_config = DeviceConfig(host=ip, timeout=timeout)
+
+    for attempt in range(max_retries):
+        try:
+            return await Device.connect(config=device_config)
+        except (TimeoutError, Exception) as e:
+            # Check if it's a timeout-related error
+            is_timeout = isinstance(e, TimeoutError) or "TimeoutError" in str(e)
+            if is_timeout and attempt < max_retries - 1:
+                LOGGER.warning(f"IP: {ip} - Timeout on attempt {attempt + 1}/{max_retries}, retrying in 10 seconds: {e}")
+                await asyncio.sleep(10)
+            else:
+                if is_timeout:
+                    LOGGER.error(f"IP: {ip} - Failed after {max_retries} attempts: {e}")
+                raise
+
+
 async def get_metrics_HS300(ip: str) -> dict[Any, Any]:
     output_dict = {}
-    dev = await Device.connect(config=DeviceConfig(host=ip, timeout=10))
+    dev = await connect_to_hs300_device(ip)
     try:
         await dev.update()
         for plug in dev.children:
@@ -84,7 +103,7 @@ async def get_metrics_HS300(ip: str) -> dict[Any, Any]:
 
 
 async def turn_off_plugs_if_no_power_HS300(ip: str) -> bool:
-    dev = await Device.connect(config=DeviceConfig(host=ip, timeout=10))
+    dev = await connect_to_hs300_device(ip)
     try:
         await dev.update()
         for plug in dev.children:
@@ -109,7 +128,7 @@ async def turn_off_plugs_if_no_power_HS300(ip: str) -> bool:
 
 
 async def check_all_plugs_are_off_HS300() -> bool:
-    dev = await Device.connect(config=DeviceConfig(host=CONFIG.HS300_IP, timeout=10))
+    dev = await connect_to_hs300_device(CONFIG.HS300_IP)
     try:
         await dev.update()
         for plug in dev.children:
@@ -133,7 +152,7 @@ async def power_off_radiator_HS300() -> bool:
     plug_name: str = "radiator"
     all_plugs_are_off = await check_all_plugs_are_off_HS300() and await check_all_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
     if all_plugs_are_off:
-        dev = await Device.connect(config=DeviceConfig(host=CONFIG.HS300_IP, timeout=10))
+        dev = await connect_to_hs300_device(CONFIG.HS300_IP)
         try:
             await dev.update()
             for plug in dev.children:
