@@ -50,7 +50,7 @@ async def send_discord_message(message: str) -> None:
 
 def should_manage_plug(plug: Any) -> bool:
     """Check if plug should be managed (turned off/monitored)."""
-    return plug.alias is not None and plug.alias not in CONFIG.DO_NOT_TURN_OFF_LIST
+    return plug.alias is not None and plug.alias in CONFIG.DESKTOPS
 
 
 def log_device_error(ip: str, error: Exception, context: str = "Got Nothing"):
@@ -119,7 +119,7 @@ async def get_metrics_HS300(ip: str) -> dict[Any, Any]:
         raise e
 
 
-async def turn_off_plugs_if_no_power_HS300(ip: str) -> bool:
+async def turn_off_desktop_plugs_if_no_power_HS300(ip: str) -> bool:
     try:
         async with managed_device_connection(connect_to_hs300_device, ip) as dev:
             for plug in dev.children:
@@ -141,7 +141,7 @@ async def turn_off_plugs_if_no_power_HS300(ip: str) -> bool:
         return False
 
 
-async def check_all_plugs_are_off_HS300() -> bool:
+async def check_all_desktop_plugs_are_off_HS300() -> bool:
     try:
         async with managed_device_connection(connect_to_hs300_device, CONFIG.HS300_IP) as dev:
             for plug in dev.children:
@@ -161,7 +161,7 @@ async def power_off_radiator_HS300() -> bool:
     and powers off Sound plug if the above is true
     """
     plug_name: str = "radiator"
-    all_plugs_are_off = await check_all_plugs_are_off_HS300() and await check_all_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
+    all_plugs_are_off = await check_all_desktop_plugs_are_off_HS300() and await check_all_desktop_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
     if all_plugs_are_off:
         try:
             async with managed_device_connection(connect_to_hs300_device, CONFIG.HS300_IP) as dev:
@@ -180,7 +180,7 @@ async def power_off_radiator_HS300() -> bool:
         return False
 
 
-async def check_all_plugs_are_off_KP125M(ip_list: list[str]) -> bool:
+async def check_all_desktop_plugs_are_off_KP125M(ip_list: list[str]) -> bool:
     for ip in ip_list:
         try:
             async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
@@ -193,7 +193,7 @@ async def check_all_plugs_are_off_KP125M(ip_list: list[str]) -> bool:
     return True
 
 
-async def turn_off_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
+async def turn_off_desktop_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
     for ip in ip_list:
         try:
             async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
@@ -293,10 +293,10 @@ def metrics():
     
 
 
-async def trigger_power_off_async():
+async def trigger_power_off_desktops_async():
     """Execute power off sequence for all devices."""
-    await turn_off_plugs_if_no_power_HS300(CONFIG.HS300_IP)
-    await turn_off_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS)
+    await turn_off_desktop_plugs_if_no_power_HS300(CONFIG.HS300_IP)
+    await turn_off_desktop_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS)
     result = await power_off_radiator_HS300()
     if result:
         await power_off_sound_KP125M(CONFIG.KP125M_SOUND_IP)
@@ -305,7 +305,7 @@ async def trigger_power_off_async():
 @app.route("/poweroff", methods=["POST"])
 def trigger_power_off():
     try:
-        asyncio.run(trigger_power_off_async())
+        asyncio.run(trigger_power_off_desktops_async())
         return jsonify({"status": "success", "message": "poweroff success"}), 200
     except Exception as e:
         LOGGER.exception(f"power off error: {e}")

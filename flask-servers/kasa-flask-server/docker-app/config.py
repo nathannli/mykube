@@ -29,7 +29,8 @@ class Config:
     )
 
     HS300_DEVICE_NAME_LIST = ["13k", "14kf", "9950x", "radiator", "alienware", "285k"]
-    DO_NOT_TURN_OFF_LIST = ["radiator", "alienware", "odyssey-g9-57", "macmini", "Sound"]
+    MONITORS = ["odyssey-g9-57", "alienware", "LGDualUp"]
+    DESKTOPS = ["13k", "14kf", "9950x", "285k", "7950x", "14ks"]
 
     LOW_POWER_THRESHOLD_WATTS = 5
 
