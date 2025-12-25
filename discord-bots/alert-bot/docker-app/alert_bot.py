@@ -14,10 +14,12 @@ Usage:
     {"message": "Your alert message here"}
 """
 
+from discord.channel import TextChannel
 from __future__ import annotations
 from flask import Flask, request
 import discord
 import asyncio
+from queue import Queue, Empty
 import os
 import threading
 import logging
@@ -26,6 +28,9 @@ from typing import Optional, Any
 # Initialize Flask app and Discord client
 app = Flask(__name__)
 client = discord.Client(intents=discord.Intents.default())
+
+# Message queue for thread-safe communication
+alert_queue = Queue()
 
 # Load environment variables
 channel_id_str = os.getenv("CHANNEL_ID", "")
@@ -39,7 +44,6 @@ logger = logging.getLogger(__name__)
 if channel_id_str == "" or bot_token == "":
     raise ValueError("Environment variables CHANNEL_ID and BOT_TOKEN must be set")
 
-# Convert channel ID to int once to avoid repeated casting
 channel_id = int(channel_id_str)
 
 @app.route("/alert", methods=["POST"])
@@ -48,83 +52,79 @@ def send_alert():
     Flask endpoint to receive alert messages and forward them to Discord.
 
     Expects a POST request with JSON payload containing a 'message' field.
-    The message is then sent to the configured Discord channel asynchronously.
+    The message is queued for processing by the Discord bot.
 
     Returns:
         tuple: Response message and HTTP status code
-            - ("Sent", 200) on success
-            - ("Expected JSON object", 400) on invalid JSON
-
-    Example:
-        POST /alert
-        Content-Type: application/json
-        {"message": "Server is down!"}
     """
-    # Parse JSON payload from request
     data: Optional[dict[str, Any]] = request.get_json()
     if not isinstance(data, dict):
         logger.error(f"Expected JSON object: {data}")
         return "Expected JSON object", 400
 
-    # Extract message from payload, with fallback
     message = data.get("message", "No message")
     logger.info(f"Received message: {message}")
 
-    async def send():
-        """
-        Async helper function to send message to Discord channel.
+    # Queue the message—Flask returns immediately
+    alert_queue.put(message)
+    return "Sent", 202
 
-        Waits for Discord client to be ready, fetches the target channel,
-        and sends the message. Handles exceptions gracefully with logging.
-        """
-        await client.wait_until_ready()
-        try:
-            # Fetch the Discord channel and send the message
-            channel = await client.fetch_channel(channel_id)
-            await channel.send(message)  # type: ignore
-            logger.info(f"Sent message to channel {channel_id}")
-        except Exception as e:
-            logger.error(f"Error sending message: {e}")
-
-    # Schedule the async send operation on the Discord client's event loop
-    asyncio.run_coroutine_threadsafe(send(), client.loop)
-    return "Sent", 200
 
 @client.event
 async def on_ready():
     """
-    Discord client event handler called when the bot successfully connects.
-
-    Logs the bot's username to confirm successful authentication and connection.
+    Discord client event handler called when the bot connects.
+    Starts the background alert processor task.
     """
     logger.info(f"Logged in as {client.user}")
+    client.loop.create_task(process_alerts())
+
+
+async def process_alerts():
+    """
+    Background task that processes messages from the alert queue.
+    Runs continuously in the Discord bot's event loop.
+    """
+    await client.wait_until_ready()
+
+    # Fetch and cache the channel once instead of on every message
+    channel: TextChannel = client.get_channel(channel_id)
+    if channel is None:
+        logger.error(f"Channel {channel_id} not found in cache, fetching from API")
+        try:
+            channel = await client.fetch_channel(channel_id)
+        except Exception as e:
+            logger.error(f"Failed to fetch channel {channel_id}: {e}")
+            return
+
+    while not client.is_closed():
+        try:
+            # Non-blocking check for queued messages
+            message = alert_queue.get_nowait()
+            try:
+                await channel.send(message)
+                logger.info(f"Sent message to channel {channel_id}")
+            except discord.HTTPException as e:
+                logger.error(f"Discord API error sending message: {e}")
+                # Re-queue the message for retry
+                alert_queue.put(message)
+                await asyncio.sleep(5.0)  # Back off before retrying
+            except Exception as e:
+                logger.error(f"Unexpected error sending message to Discord: {e}")
+        except Empty:
+            # Queue is empty, sleep briefly before checking again
+            await asyncio.sleep(0.5)
 
 
 def run_flask():
-    """
-    Run the Flask web server in a separate thread.
-
-    Starts the Flask app on all interfaces (0.0.0.0) at port 5000.
-    This allows the bot to receive HTTP requests from external sources.
-    """
+    """Run Flask web server in a separate thread."""
     app.run(host="0.0.0.0", port=5000)
 
 
 if __name__ == "__main__":
-    """
-    Main execution block.
-
-    Starts both the Flask web server and Discord bot concurrently:
-    1. Flask server runs in a separate thread to handle HTTP requests
-    2. Discord client runs in the main thread to maintain the bot connection
-
-    This dual-threaded approach allows the bot to simultaneously:
-    - Accept HTTP POST requests via Flask
-    - Maintain connection to Discord and send messages
-    """
-    # Start Flask server in a separate thread
-    flask_thread = threading.Thread(target=run_flask)
+    # Start Flask in background thread
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
     flask_thread.start()
 
-    # Start Discord bot in main thread (blocking call)
+    # Run Discord bot in main thread
     client.run(bot_token)
