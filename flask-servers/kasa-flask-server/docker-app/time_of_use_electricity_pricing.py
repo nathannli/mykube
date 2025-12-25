@@ -71,7 +71,7 @@ class TimeOfUseElectricityPricing:
     def get_current_price(self) -> float:
         cur_hour: int = self.get_now().hour
         season = WINTER if self.is_winter() else SUMMER
-        day_type = WEEKDAY if self.is_weekday() and self.get_now() not in HOLIDAY_DATES else WEEKEND
+        day_type = WEEKDAY if self.is_weekday() and self.get_now().replace(hour=0, minute=0, second=0,microsecond=0) not in HOLIDAY_DATES else WEEKEND
         return self.pricing[season][day_type][cur_hour]
 
     def __repr__(self):
