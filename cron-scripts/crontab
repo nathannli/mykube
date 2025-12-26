@@ -1,0 +1,3 @@
+0 3 * * 0 bash /home/nathan/github/mykube/cron-scripts/pg-backup.sh >> ~/cron-scripts/pg-backup.log 2>&1
+0 21 * * 5 bash /home/nathan/github/mypersonalfinance/bin/parents-db-cron.sh >> /home/nathan/logs/parents-db-cron.log 2>&1
+30 * * * * bash /home/nathan/cron-scripts/duck.sh >> ~/cron-scripts/duck.log 2>&1
