@@ -15,7 +15,6 @@ Usage:
 """
 
 from discord.channel import TextChannel
-from __future__ import annotations
 from flask import Flask, request
 import discord
 import asyncio
