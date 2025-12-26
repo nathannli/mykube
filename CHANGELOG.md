@@ -1,3 +1,19 @@
+## [1.0.8] - 2025-12-26
+
+### 🚀 Features
+
+- *(kasa flask server)* Add holiday schedule
+- *(kasa flask server)* Update to v64
+- *(flask kasa server)* Flip logic
+- *(kasa flask server)* Add lg dual up
+- *(home assistant)* Init
+- *(discord-bots)* Update alert bot
+- *(argon one)* Init
+- *(crontab)* Init
+
+### 📚 Documentation
+
+- Update readme with git cliff instructions
 ## [1.0.7] - 2025-12-22
 
 ### 🚀 Features
