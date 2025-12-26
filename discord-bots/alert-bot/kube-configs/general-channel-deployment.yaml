@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: discord-general-channel-alert-bot
-        image: nathannnli/mydiscordalertbot:v6
+        image: nathannnli/mydiscordalertbot:v8
         env:
         - name: BOT_TOKEN
           valueFrom:
@@ -44,6 +44,6 @@ spec:
   selector:
     app: discord-general-channel-alert-bot
   ports:
-    - port: 5000
-      targetPort: 5000
-      nodePort: 30008
+  - port: 5000
+    targetPort: 5000
+    nodePort: 30008
