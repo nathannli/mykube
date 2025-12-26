@@ -2,3 +2,12 @@ https://github.com/transmission/transmission
 ^ clone and build on device
 don't use kubernetes, deploy on metal
 for allowing ips, modify the service file and add `-a <ip address>`, ie: `-a 10.0.*.*`
+
+service file located after building in: `transmission/build/daemon`
+modify user
+add group
+ie: 
+User=nathan
+Group=nathan
+
+place in /etc/systemd/system, run as sudo
