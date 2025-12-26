@@ -13,6 +13,7 @@ DB_HOST="localhost"
 DB_PORT="5432"
 MY_DB_NAME="finance"
 PARENTS_DB_NAME="parents_finance"
+METABASE_DB_NAME="metabase"
 DB_USER="${PG_BACKUP_USER}"
 DB_PASSWORD="${PG_BACKUP_PASSWORD}"
 BASE_BACKUP_DIR="/home/nathan/pg-backup"
@@ -21,6 +22,8 @@ FTP_HOST="195.168.1.14"
 FTP_USER="${PG_BACKUP_FTP_USER}"
 FTP_PASS="${PG_BACKUP_FTP_PASS}"
 KEEP_DAYS=60  # Number of days to keep local backups
+
+DBS_TO_BACKUP=("$MY_DB_NAME" "$PARENTS_DB_NAME" "$METABASE_DB_NAME")
 
 # Check if required environment variables are set
 if [[ -z "$DB_USER" ]] || [[ -z "$DB_PASSWORD" ]]; then
@@ -37,7 +40,7 @@ if [[ -z "$FTP_USER" ]] || [[ -z "$FTP_PASS" ]]; then
     exit 1
 fi
 
-for DB_NAME in $MY_DB_NAME $PARENTS_DB_NAME; do
+for DB_NAME in "${DBS_TO_BACKUP[@]}"; do
     echo "Backing up $DB_NAME"
 
     # Generate unique backup filename for this database
