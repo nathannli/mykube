@@ -1,6 +1,4 @@
 #!/bin/bash
-source ~/github/mykube/cron-scripts/pg-backup.env
-
 # Function to send Discord notification
 send_discord_notification() {
     local message="$1"
