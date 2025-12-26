@@ -1,4 +1,26 @@
+tutorial: https://dataslinger.medium.com/setting-up-remote-postgresql-on-raspberry-pi-f9058b415768
+
+setup Automated repository configuration: 
+https://www.postgresql.org/download/linux/debian/
+
+then
 install and setup via apt
-modify /etc/postgres/#/main/postgresql.conf & pg_hba.conf
+modify pg_hba.conf
 
 `sudo apt install postgresql-18`
+
+
+then
+1) change user as postgres
+2) create new user 'nathan'
+3) then enter psql as postgres to create new database nathan
+4) then test psql on original user (nathan)
+
+then edit pg_hba.conf as sudo
+
+in postgresql.conf, on the listen_addresses line, uncomment
+then change from localhost to *
+
+
+then restore backup files:
+https://stackoverflow.com/questions/2732474/restore-a-postgres-backup-file-using-the-command-line
