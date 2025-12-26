@@ -1,2 +1,4 @@
 install and setup via apt
 modify /etc/postgres/#/main/postgresql.conf & pg_hba.conf
+
+`sudo apt install postgresql-18`
