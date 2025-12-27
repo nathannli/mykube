@@ -24,6 +24,8 @@ data:
     - Shortcuts:
         - Homepage:
             - href: http://195.168.1.7:30081/
+        - Home Assistant:
+            - href: http://195.168.1.7:8123/
         - OpnSense:
             - href: http://195.168.1.1/
         - Prometheus:
