@@ -57,10 +57,20 @@ class TimeOfUseElectricityPricing:
         return datetime.now(tz=self.toronto_tz)
 
     def get_winter_pricing_date_start(self) -> datetime:
-        return datetime(year=self.get_now().year, month=11, day=1, tzinfo=self.toronto_tz)
+        now = self.get_now()
+        # If we're in Jan-Apr, winter started last year in November
+        if now.month < 5:
+            return datetime(year=now.year - 1, month=11, day=1, tzinfo=self.toronto_tz)
+        # Otherwise, winter starts this year in November
+        return datetime(year=now.year, month=11, day=1, tzinfo=self.toronto_tz)
 
     def get_winter_pricing_date_end(self) -> datetime:
-        return datetime(year=self.get_now().year + 1, month=4, day=30, tzinfo=self.toronto_tz)
+        now = self.get_now()
+        # If we're in Jan-Apr, winter ends this year in April (end of day April 30)
+        if now.month < 5:
+            return datetime(year=now.year, month=4, day=30, hour=23, minute=59, second=59, tzinfo=self.toronto_tz)
+        # Otherwise, winter ends next year in April (end of day April 30)
+        return datetime(year=now.year + 1, month=4, day=30, hour=23, minute=59, second=59, tzinfo=self.toronto_tz)
 
     def is_winter(self) -> bool:
         return self.get_winter_pricing_date_start() <= self.get_now() <= self.get_winter_pricing_date_end()
