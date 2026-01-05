@@ -27,6 +27,8 @@ spec:
       labels:
         app: grafana
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: rpi5
       securityContext:
         fsGroup: 472
         supplementalGroups:
