@@ -35,8 +35,10 @@ data:
         - Kubernetes-Dashboard:
             - href: https://195.168.1.7:32260/
               description: "generate token: kubectl -n kubernetes-dashboard create token admin-user"
-        - Transmission:
+        - RPI5-Transmission:
             - href: http://195.168.1.7:9091/
+        - RPI4-Transmission:
+            - href: http://195.168.1.6:9091/
         - 315NAS:
             - href: http://195.168.1.14:8080
         - nathanbook:
