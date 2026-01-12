@@ -1,4 +1,11 @@
 #!/bin/bash
+ # Source environment variables
+  ENV_FILE="$(dirname "$0")/pg-backup.env"
+  if [[ -f "$ENV_FILE" ]]; then
+      source "$ENV_FILE"
+      echo "Sourced environment variables from $ENV_FILE"
+  fi
+
 # Function to send Discord notification
 send_discord_notification() {
     local message="$1"
