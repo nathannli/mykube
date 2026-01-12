@@ -30,6 +30,7 @@ FTP_USER="${PG_BACKUP_FTP_USER}"
 FTP_PASS="${PG_BACKUP_FTP_PASS}"
 KEEP_DAYS=60  # Number of days to keep local backups
 
+# List of databases to back up
 DBS_TO_BACKUP=("$MY_DB_NAME" "$PARENTS_DB_NAME" "$METABASE_DB_NAME")
 
 # Check if required environment variables are set
@@ -79,7 +80,16 @@ for DB_NAME in "${DBS_TO_BACKUP[@]}"; do
     # Upload backup file to FTP server
     REMOTE_DIR="$BASE_REMOTE_DIR/$DB_NAME"
     echo "Uploading $BACKUP_FILE to FTP server..."
-    curl -T "$BACKUP_DIR/$BACKUP_FILE" ftp://$FTP_USER:$FTP_PASS@$FTP_HOST$REMOTE_DIR/ --silent --show-error
+
+    lftp ftp://"$FTP_HOST" \
+    -u "$PG_BACKUP_FTP_USER,$PG_BACKUP_FTP_PASS" \
+    -e "
+        set ssl:verify-certificate no
+        mkdir -p $REMOTE_DIR
+        cd $REMOTE_DIR
+        put $BACKUP_DIR/$BACKUP_FILE
+        bye
+    "
 
     # Check if upload was successful
     if [[ $? -eq 0 ]]; then
@@ -111,7 +121,15 @@ for DB_NAME in "${DBS_TO_BACKUP[@]}"; do
 
             # Delete from FTP server
             echo "Deleting $backup_file from FTP server..."
-            curl -u "$FTP_USER:$FTP_PASS" -Q "DELE $REMOTE_DIR/$backup_file" ftp://$FTP_HOST --silent
+
+            lftp ftp://"$FTP_HOST" \
+            -u "$PG_BACKUP_FTP_USER,$PG_BACKUP_FTP_PASS" \
+            -e "
+                set ssl:verify-certificate no
+                cd $REMOTE_DIR
+                rm $backup_file
+                bye
+            "
 
             if [[ $? -eq 0 ]]; then
                 echo "Successfully deleted $backup_file from FTP server."
