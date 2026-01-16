@@ -1,0 +1,17 @@
+#!/bin/bash
+
+desktops=(13k 14kf 14ks 7950x amd 285k)
+iot_devices=(rpi4 rpi5 mac)
+windows_computers=(beryl nelson 285k 14kf)
+
+list_of_computers_to_poweroff=("${desktops[@]}" "${iot_devices[@]}")
+
+poweroffAll() {
+    for computer in "${list_of_computers_to_poweroff[@]}"; do
+        if [[ " ${windows_computers[*]} " =~ " ${computer} " ]]; then
+            s $computer -t pwsh -Interactive -c poweroff
+        else
+            s $computer sudo poweroff
+        fi
+    done
+}
