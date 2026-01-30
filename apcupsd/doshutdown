@@ -1,17 +1,58 @@
 #!/bin/bash
 
-desktops=(13k 14kf 14ks 7950x amd 285k)
-iot_devices=(rpi4 rpi5 mac)
-windows_computers=(beryl nelson 285k 14kf)
+desktops=(13k 14kf 14ks 7950x amd 285k macwifi)
+kube_cluster=(rpi4 rpi5)
+windows_computers=(285k 14kf)
 
-list_of_computers_to_poweroff=("${desktops[@]}" "${iot_devices[@]}")
+log() {
+    logger "[apcupsd-shutdown] $1"
+}
+
+send_discord_notification() {
+    local message="$1"
+    curl -X POST http://localhost:30008/alert \
+        -H "Content-Type: application/json" \
+        -d "{\"message\": \"$message\"}" \
+        --silent --show-error || true
+}
 
 poweroffAll() {
-    for computer in "${list_of_computers_to_poweroff[@]}"; do
+    log "Starting desktop shutdown sequence"
+    for computer in "${desktops[@]}"; do
+        log "Shutting down $computer"
         if [[ " ${windows_computers[*]} " =~ " ${computer} " ]]; then
-            s $computer -t pwsh -Interactive -c poweroff
+            timeout 10s s $computer -t pwsh -NoProfile -Command "Stop-Computer -Force" || log "WARNING: failed to shut down Windows host $computer"
         else
-            s $computer sudo poweroff
+            timeout 10s s $computer sudo poweroff || log "WARNING: failed to shut down Linux host $computer"
         fi
     done
+    log "Desktop shutdown sequence complete"
 }
+
+poweroffkubecluster() {
+    log "Starting Kubernetes node shutdown"
+    for node in "${kube_cluster[@]}"; do
+        log "Shutting down kube node $node"
+        timeout 10s s $node sudo poweroff || log "WARNING: failed to shut down kube node $node"
+    done
+    log "Kubernetes node shutdown complete"
+}
+
+triggerPowerOff() {
+    log "Triggering external poweroff endpoint"
+    curl -X POST http://195.168.1.7:30101/poweroff || log "WARNING: external poweroff trigger failed"
+}
+
+log "UPS power loss detected — shutdown script starting"
+send_discord_notification "APC UPS Detected Power Loss - Initiating Shutdown Sequence"
+send_discord_notification "APC UPS Detected Power Loss - poweroffAll initiated"
+poweroffAll
+send_discord_notification "APC UPS Detected Power Loss - poweroffAll finished. sleeping 10"
+log "Sleeping 10 seconds before next phase"
+sleep 10
+send_discord_notification "APC UPS Detected Power Loss - triggerPowerOff initiated"
+triggerPowerOff
+send_discord_notification "APC UPS Detected Power Loss - triggerPowerOff finished."
+send_discord_notification "APC UPS Detected Power Loss - turning off kube cluster. This is the last message"
+poweroffkubecluster
+log "Shutdown orchestration complete — apcupsd will now power off host"
