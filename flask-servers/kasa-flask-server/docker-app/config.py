@@ -10,10 +10,18 @@ def require_env(name: str) -> str:
     return value
 
 
+def get_bool_env(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 class Config:
     # user config
     HS300_IP: str = require_env("HS300_IP")
-    KP125M_SOUND_IP: str = require_env("KP125M_SOUND_IP")
+    KP125M_SOUND_IP: str | None = os.getenv("KP125M_SOUND_IP")
+    ENABLE_SOUND_DEVICE_CHECK: bool = KP125M_SOUND_IP is not None
     KP125M_IPS_RAW: str = require_env("KP125M_IPS")
     KP125M_IPS: list[str] = [x.strip() for x in KP125M_IPS_RAW.split('-') if x != '']
     NAME = "kasapower"
@@ -38,4 +46,8 @@ class Config:
     DISCORD_ALERT_BOT_URL = "http://discord-general-channel-alert-bot-node-port.discord-bots.svc.cluster.local:5000/alert"
 
     def __repr__(self):
-        return f"Config(HS300_IP={self.HS300_IP}, KP125M_IPS={self.KP125M_IPS}, KP125M_SOUND_IP={self.KP125M_SOUND_IP})"
+        return (
+            f"Config(HS300_IP={self.HS300_IP}, KP125M_IPS={self.KP125M_IPS}, "
+            f"ENABLE_SOUND_DEVICE_CHECK={self.ENABLE_SOUND_DEVICE_CHECK}, "
+            f"KP125M_SOUND_IP={self.KP125M_SOUND_IP})"
+        )
