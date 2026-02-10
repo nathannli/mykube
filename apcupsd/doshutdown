@@ -40,7 +40,7 @@ poweroffkubecluster() {
 
 triggerPowerOff() {
     log "Triggering external poweroff endpoint"
-    curl -X POST http://195.168.1.7:30101/poweroff || log "WARNING: external poweroff trigger failed"
+    curl -X POST http://10.195.1.7:30101/poweroff || log "WARNING: external poweroff trigger failed"
 }
 
 log "UPS power loss detected — shutdown script starting"

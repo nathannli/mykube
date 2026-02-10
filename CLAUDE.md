@@ -63,10 +63,10 @@ Discord Bots (alerts, user queries)
 
 ### Network Configuration
 
-- **Home Local Network**: `195.168.1.0/24` (custom IP range configured by user)
+- **Home Local Network**: `10.195.1.0/24` (custom IP range configured by user)
   - Smart devices (TP-Link Kasa plugs, Govee devices) are on this network
   - K3s cluster must have network access to this range for device communication
-  - Flask servers connect to devices on this network via IPs like `195.168.1.226:9999`
+  - Flask servers connect to devices on this network via IPs like `10.195.1.226:9999`
 
 ## Common Development Commands
 

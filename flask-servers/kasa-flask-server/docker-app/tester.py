@@ -7,7 +7,7 @@ from pprint import pp
 
 
 async def main():
-    ip = "195.168.1.226"
+    ip = "10.195.1.226"
     dev = await Device.connect(config=DeviceConfig(host=ip, timeout=10))
     print(dev)
     await dev.update()

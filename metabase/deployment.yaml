@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: metabase-container
-        image: metabase/metabase:v0.57.1.x
+        image: metabase/metabase:v0.58.5.x
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
@@ -37,4 +37,4 @@ spec:
               name: metabase-secrets
               key: db-password
         - name: MB_DB_HOST
-          value: "195.168.1.7"
+          value: "10.195.1.7"
