@@ -23,34 +23,34 @@ data:
     bookmarks.yaml: |
         - Shortcuts:
             - Homepage:
-                - href: http:/10.195.1.7:30081/
+                - href: http://10.195.1.7:30081/
             - Home Assistant:
-                - href: http:/10.195.1.7:8123/
+                - href: http://10.195.1.7:8123/
             - OpnSense:
-                - href: http:/10.195.1.1/
+                - href: http://10.195.1.1/
             - Prometheus:
-                - href: http:/10.195.1.7:31090/
+                - href: http://10.195.1.7:31090/
             - Grafana:
-                - href: http:/10.195.1.7:3000/
+                - href: http://10.195.1.7:3000/
             - Kubernetes-Dashboard:
-                - href: https:/10.195.1.7:32260/
+                - href: https://10.195.1.7:32260/
                   description: "generate token: kubectl -n kubernetes-dashboard create token admin-user"
             - RPI5-Transmission:
-                - href: http:/10.195.1.7:9091/
+                - href: http://10.195.1.7:9091/
             - RPI4-Transmission:
-                - href: http:/10.195.1.6:9091/
+                - href: http://10.195.1.6:9091/
             - 315NAS:
-                - href: http:/10.195.1.14:8080
+                - href: http://10.195.1.14:8080
             - nathanbook:
-                - href: http:/10.195.1.12/
+                - href: http://10.195.1.12/
             - metabase-myfinance:
-                - href: http:/10.195.1.7:30080/dashboard/2-nathan-finance?date=past1years~
+                - href: http://10.195.1.7:30080/dashboard/2-nathan-finance?date=past1years~
                   description: "direct metabase link to your finance dashboard"
             - metabase-parentsfinance:
-                - href: http:/10.195.1.7:30080/dashboard/4-parents-dashboard
+                - href: http://10.195.1.7:30080/dashboard/4-parents-dashboard
                   description: "direct metabase link to parents finance dashboard"
             - xiaomi-router:
-                - href: http:/10.195.1.13/
+                - href: http://10.195.1.13/
             - rogers-modem:
                 - href: http://10.0.0.1/
 
