@@ -7,3 +7,4 @@ cron-scripts/pg-backup.env
 **/__pycache__
 homeassistant/config
 **/pg-backup.env
+.vscode
