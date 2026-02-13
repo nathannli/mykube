@@ -8,3 +8,4 @@ cron-scripts/pg-backup.env
 homeassistant/config
 **/pg-backup.env
 .vscode
+.env
