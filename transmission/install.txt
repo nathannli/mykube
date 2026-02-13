@@ -1,3 +1,5 @@
+now we use docker
+----------------------- below is old now that we use tailscale -----------------------
 https://github.com/transmission/transmission
 ^ clone and build on device
 don't use kubernetes, deploy on metal
