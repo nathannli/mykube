@@ -8,13 +8,8 @@ services:
       - NET_ADMIN
     env_file:
       - .env
-    environment:
-      - TRANSMISSION_LOG_LEVEL=error
-      - TRANSMISSION_RPC_WHITELIST=100.*,127.0.0.1,10.20.*
-      - TRANSMISSION_RPC_WHITELIST_ENABLED=true
-      - TRANSMISSION_DOWNLOAD_DIR=/downloads
     volumes:
-      - /home/nathan/Downloads:/downloads
+      - /home/nathan/Downloads:/data
       - ./config:/config
     ports:
       - "9091:9091"
