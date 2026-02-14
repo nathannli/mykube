@@ -8,8 +8,6 @@ services:
       - NET_ADMIN
     env_file:
       - .env
-    environment:
-      - TRANSMISSION_RPC_WHITELIST_ENABLED=false
     volumes:
       - /home/nathan/Downloads:/data
       - ./config:/config
