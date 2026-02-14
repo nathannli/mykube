@@ -15,8 +15,6 @@ spec:
       labels:
         app: prometheus-server
     spec:
-      nodeSelector:
-        kubernetes.io/hostname: rpi4
       containers:
       - name: prometheus
         image: prom/prometheus
