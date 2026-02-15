@@ -1,0 +1,23 @@
+# first add our custom repo to your local helm repositories
+helm repo add headlamp https://kubernetes-sigs.github.io/headlamp/
+
+# now you should be able to install headlamp via helm
+helm install my-headlamp headlamp/headlamp --namespace headlamp
+<!-- 
+❯ helm install my-headlamp headlamp/headlamp --namespace headlamp
+NAME: my-headlamp
+LAST DEPLOYED: Sun Feb 15 16:23:11 2026
+NAMESPACE: headlamp
+STATUS: deployed
+REVISION: 1
+DESCRIPTION: Install complete
+TEST SUITE: None
+NOTES:
+1. Get the application URL by running these commands:
+  export POD_NAME=$(kubectl get pods --namespace headlamp -l "app.kubernetes.io/name=headlamp,app.kubernetes.io/instance=my-headlamp" -o jsonpath="{.items[0].metadata.name}")
+  export CONTAINER_PORT=$(kubectl get pod --namespace headlamp $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
+  echo "Visit http://127.0.0.1:8080 to use your application"
+  kubectl --namespace headlamp port-forward $POD_NAME 8080:$CONTAINER_PORT
+2. Get the token using
+  kubectl create token my-headlamp --namespace headlamp 
+  -->

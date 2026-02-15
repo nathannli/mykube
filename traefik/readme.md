@@ -1,2 +1,2 @@
-helm upgrade traefik traefik/traefik -n kube-system -f traefik-values.yaml
-kubectl get endpoints traefik -n kube-system -o yaml
+add modify: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+redeploy by restarting k3s
