@@ -93,15 +93,3 @@ spec:
     app: grafana
   sessionAffinity: None
   type: LoadBalancer
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: grafana-provisioning-pvc
-  namespace: grafana
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Mi
