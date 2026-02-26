@@ -25,7 +25,7 @@ data:
             - Homepage:
                 - href: http://10.20.0.8:30081/
             - OpenClaw:
-                - href: https://nathanmacmini.tail5666ac.ts.net/
+                - href: https://nathanmacmini.tail5666ac.ts.net/openclaw
             - Home Assistant:
                 - href: http://10.20.0.8:8123/
             - Prometheus:
