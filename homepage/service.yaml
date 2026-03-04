@@ -12,5 +12,9 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+  - IPv4
+  - IPv6
   selector:
     app.kubernetes.io/name: homepage

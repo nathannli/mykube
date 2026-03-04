@@ -93,3 +93,7 @@ spec:
     app: grafana
   sessionAffinity: None
   type: LoadBalancer
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+  - IPv4
+  - IPv6

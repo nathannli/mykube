@@ -7,6 +7,10 @@ spec:
   ports:
   - port: 80
     targetPort: 4466
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+  - IPv4
+  - IPv6
   selector:
     k8s-app: headlamp
 ---

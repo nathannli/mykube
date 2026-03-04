@@ -13,3 +13,7 @@ spec:
       targetPort: 3000
       nodePort: 30080
   type: NodePort
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+  - IPv4
+  - IPv6
