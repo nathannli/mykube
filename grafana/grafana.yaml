@@ -85,6 +85,10 @@ metadata:
   name: grafana
   namespace: grafana
 spec:
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+  - IPv4
+  - IPv6
   ports:
   - port: 3000
     protocol: TCP

@@ -7,6 +7,10 @@ metadata:
     app.kubernetes.io/name: homepage
 spec:
   type: ClusterIP
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+  - IPv4
+  - IPv6
   ports:
     - port: 3000
       targetPort: http

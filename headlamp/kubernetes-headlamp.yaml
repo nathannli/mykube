@@ -4,6 +4,10 @@ metadata:
   name: headlamp
   namespace: headlamp
 spec:
+  ipFamilyPolicy: PreferDualStack
+  ipFamilies:
+  - IPv4
+  - IPv6
   ports:
   - port: 80
     targetPort: 4466
