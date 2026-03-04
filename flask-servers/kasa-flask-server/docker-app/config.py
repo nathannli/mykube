@@ -37,7 +37,7 @@ class Config:
     )
 
     HS300_DEVICE_NAME_LIST = ["13k", "14kf", "9950x", "7950x", "14ks", "285k"]
-    MONITORS = ["odyssey-g9-57", "alienware", "LGDualUp"]
+    MONITORS = ["odyssey-g9-57", "alienware", "LGDualUp", "odyssey-g9-49"]
     DESKTOPS = ["13k", "14kf", "9950x", "285k", "7950x", "14ks"]
     RADIATOR_PLUG_TYPE = "KP125M"
 
