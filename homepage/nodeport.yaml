@@ -4,10 +4,6 @@ metadata:
   name: homepage-nodeport
   namespace: homepage
 spec:
-  ipFamilyPolicy: PreferDualStack
-  ipFamilies:
-  - IPv4
-  - IPv6
   selector:
     app: homepage
   ports:
