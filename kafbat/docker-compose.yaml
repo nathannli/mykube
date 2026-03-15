@@ -1,0 +1,10 @@
+services:
+  kafbat-ui:
+    container_name: kafbat-ui
+    image: ghcr.io/kafbat/kafka-ui:latest
+    ports:
+      - 8081:8080
+    environment:
+       DYNAMIC_CONFIG_ENABLED: 'true'
+    volumes:
+      - /home/nathan/git/mykube/kafbat/config.yaml:/etc/kafkaui/dynamic_config.yaml
