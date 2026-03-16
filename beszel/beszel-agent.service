@@ -1,0 +1,28 @@
+[Unit]
+Description=Beszel Agent Service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Environment="PORT=45876"
+ExecStart=/opt/beszel-agent/beszel-agent -k "SSH-KEY-PROVIDED BY HUB" -t "token-provided-by-hub" -u "http://10.20.0.8:8090"
+User=beszel
+Restart=on-failure
+RestartSec=5
+StateDirectory=beszel-agent
+
+# Security/sandboxing settings
+KeyringMode=private
+LockPersonality=yes
+ProtectClock=yes
+ProtectHome=read-only
+ProtectHostname=yes
+ProtectKernelLogs=yes
+ProtectSystem=strict
+RemoveIPC=yes
+RestrictSUIDSGID=true
+
+
+
+[Install]
+WantedBy=multi-user.target

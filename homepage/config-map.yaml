@@ -54,6 +54,8 @@ data:
                   description: "direct metabase link to parents finance dashboard"
             - kafbat-ui:
                 - href: http://10.20.0.8:8081/
+            - beszel-hub:
+                - href: http://10.20.0.8:8090/
             - xiaomi-router:
                 - href: http://10.20.0.140/
             - rogers-modem:
