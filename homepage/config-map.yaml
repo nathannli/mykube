@@ -23,23 +23,23 @@ data:
     bookmarks.yaml: |
         - Shortcuts:
             - Homepage:
-                - href: http://10.20.0.8:30081/
+                - href: http://10.20.0.170:30081/
             - OpenClaw:
                 - href: https://nathanmacmini.tail5666ac.ts.net/openclaw
             - Home Assistant:
-                - href: http://10.20.0.8:8123/
+                - href: http://10.20.0.170:8123/
             - Prometheus:
-                - href: http://10.20.0.8:31090/
+                - href: http://10.20.0.170:31090/
             - Grafana:
-                - href: http://10.20.0.8:31242/
+                - href: http://10.20.0.170:31242/
             - Kubernetes-Dashboard:
-                - href: https://10.20.0.8:32260/
+                - href: https://10.20.0.170:32260/
                   description: "generate token: kubectl -n kubernetes-dashboard create token admin-user"
             - headlamp:
-                - href: https://10.20.0.8:30808/
+                - href: https://10.20.0.170:30808/
                   description: "generate token: kubectl create token headlamp-admin -n headlamp"
             - RPI5-Transmission:
-                - href: http://10.20.0.8:9091/
+                - href: http://10.20.0.170:9091/
             - RPI4-Transmission:
                 - href: http://10.20.0.200:9091/
             - 315NAS:
@@ -47,15 +47,15 @@ data:
             - nathanbook:
                 - href: http://10.20.0.71/
             - metabase-myfinance:
-                - href: http://10.20.0.8:30080/dashboard/2-nathan-finance?date=past1years~
+                - href: http://10.20.0.170:30080/dashboard/2-nathan-finance?date=past1years~
                   description: "direct metabase link to your finance dashboard"
             - metabase-parentsfinance:
-                - href: http://10.20.0.8:30080/dashboard/4-parents-dashboard
+                - href: http://10.20.0.170:30080/dashboard/4-parents-dashboard
                   description: "direct metabase link to parents finance dashboard"
             - kafbat-ui:
-                - href: http://10.20.0.8:8081/
+                - href: http://10.20.0.170:8081/
             - beszel-hub:
-                - href: http://10.20.0.8:8090/
+                - href: http://10.20.0.170:8090/
             - xiaomi-router:
                 - href: http://10.20.0.140/
             - rogers-modem:
