@@ -31,10 +31,7 @@ data:
             - Prometheus:
                 - href: http://10.20.0.170:31090/
             - Grafana:
-                - href: http://10.20.0.170:31242/
-            - Kubernetes-Dashboard:
-                - href: https://10.20.0.170:32260/
-                  description: "generate token: kubectl -n kubernetes-dashboard create token admin-user"
+                - href: http://10.20.0.170:3000/
             - headlamp:
                 - href: https://10.20.0.170:30808/
                   description: "generate token: kubectl create token headlamp-admin -n headlamp"
