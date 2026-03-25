@@ -42,7 +42,7 @@ data:
             - 315NAS:
                 - href: http://10.20.0.18:8080
             - nathanbook:
-                - href: http://10.20.0.75/
+                - href: http://10.20.0.75/UI/login
             - metabase-myfinance:
                 - href: http://10.20.0.170:30080/dashboard/2-nathan-finance?date=past1years~
                   description: "direct metabase link to your finance dashboard"
