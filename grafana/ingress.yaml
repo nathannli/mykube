@@ -4,6 +4,10 @@ metadata:
   name: grafana-ingress
   namespace: grafana
 spec:
+  tls:
+  - hosts:
+    - mygrafana.internal
+    secretName: grafana-tls
   rules:
   - host: mygrafana.internal
     http:

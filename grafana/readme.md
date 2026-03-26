@@ -2,6 +2,18 @@ https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/
 
 after deploying, use unbound dns to add a hosts to point mygrafana.internal to the rpi5 or rpi ip address
 
+tls:
+1. issue a certificate whose SAN includes `mygrafana.internal`
+2. make sure the issuing CA is trusted by your Mac/browser
+3. copy `tls-secret.example.yaml` to `tls-secret.yaml`
+4. replace the placeholder `tls.crt` and `tls.key` values in `tls-secret.yaml`
+5. deploy with `kubectl apply -f ./grafana`
+
+notes:
+- the secret name must stay `grafana-tls` to match `ingress.yaml`
+- if the certificate chain includes intermediates, include the full chain in `tls.crt`
+- without this secret, Traefik falls back to its default self-signed certificate
+
 for the discord alerts, remember to add the suffic url like '/alert' to the end of the url
 
 
