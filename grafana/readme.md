@@ -4,9 +4,25 @@ after deploying, use unbound dns to add a hosts to point mygrafana.internal to t
 
 tls:
 1. issue a certificate whose SAN includes `mygrafana.internal`
+    ```
+    brew install mkcert nss
+    mkcert -install
+    cd /Volumes/data/personal/mykube/grafana
+    mkcert mygrafana.internal
+    ```
+    Created a new certificate valid for the following names 📜
+    - "mygrafana.internal"
+    The certificate is at "./mygrafana.internal.pem" and the key at "./mygrafana.internal-key.pem" ✅
+    It will expire on 26 June 2028 🗓
 2. make sure the issuing CA is trusted by your Mac/browser
 3. copy `tls-secret.example.yaml` to `tls-secret.yaml`
 4. replace the placeholder `tls.crt` and `tls.key` values in `tls-secret.yaml`
+    ```
+    kubectl -n grafana create secret tls grafana-tls \
+    --cert=mygrafana.internal.pem \
+    --key=mygrafana.internal-key.pem \
+    --dry-run=client -o yaml > tls-secret.yaml
+    ```
 5. deploy with `kubectl apply -f ./grafana`
 
 notes:
