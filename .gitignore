@@ -9,3 +9,4 @@ homeassistant/config
 **/pg-backup.env
 .vscode
 .env
+**/tls-secret.yaml
