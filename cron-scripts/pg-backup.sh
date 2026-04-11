@@ -9,7 +9,7 @@
 # Function to send Discord notification
 send_discord_notification() {
     local message="$1"
-    curl -X POST http://localhost:30008/alert \
+    curl -X POST http://localhost:30007/alert \
         -H "Content-Type: application/json" \
         -d "{\"message\": \"$message\"}" \
         --silent --show-error
@@ -25,7 +25,7 @@ DB_USER="${PG_BACKUP_USER}"
 DB_PASSWORD="${PG_BACKUP_PASSWORD}"
 BASE_BACKUP_DIR="/home/nathan/pg-backup"
 BASE_REMOTE_DIR="/nathan/pg-backup"
-FTP_HOST="10.195.1.14"
+FTP_HOST="10.20.0.18"
 FTP_USER="${PG_BACKUP_FTP_USER}"
 FTP_PASS="${PG_BACKUP_FTP_PASS}"
 KEEP_DAYS=60  # Number of days to keep local backups
