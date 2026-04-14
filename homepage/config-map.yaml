@@ -24,6 +24,8 @@ data:
         - Shortcuts:
             - Homepage:
                 - href: http://10.20.0.170:30081/
+            - OpenWebUI:
+                - href: http://10.20.0.170:30809/
             - OpenClaw:
                 - href: https://nathanmacmini.tail5666ac.ts.net/openclaw
             - Home Assistant:

@@ -38,7 +38,7 @@ helm install openwebui open-webui/open-webui --namespace openwebui --create-name
 #   Access via ClusterIP service:
 
 #     export LOCAL_PORT=8080
-#     export POD_NAME=$(kubectl get pods -n openwebui -l "app.kubernetes.io/component=openwebui-open-webui" -o jsonpath="{.items[0].metadata.name}")
+#     export POD_NAME=$(kubectl get pods -n openwebui -l "app.kubernetes.io/component=open-webui" -o jsonpath="{.items[0].metadata.name}")
 #     export CONTAINER_PORT=$(kubectl get pod -n openwebui $POD_NAME -o jsonpath="{.spec.containers[0].ports[0].containerPort}")
 #     kubectl -n openwebui port-forward $POD_NAME $LOCAL_PORT:$CONTAINER_PORT
 #     echo "Visit http://127.0.0.1:$LOCAL_PORT to use your application"
