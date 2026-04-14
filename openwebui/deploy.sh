@@ -6,4 +6,4 @@ set -euo pipefail
 kubectl get namespace openwebui >/dev/null 2>&1 || kubectl create namespace openwebui
 
 # deploy openwebui resources
-kubectl apply -f ./
+kubectl apply -f ./kubectl-yaml/
