@@ -12,8 +12,12 @@ metadata:
   #   gethomepage.dev/icon: homepage.png
   #   gethomepage.dev/name: Homepage
 spec:
+  tls:
+  - hosts:
+    - myhomepage.internal
+    secretName: homepage-tls
   rules:
-  - host: "myhomepage.internal"
+  - host: myhomepage.internal
     http:
       paths:
       - path: "/"

@@ -6,7 +6,7 @@ tls:
 1. issue a certificate whose SAN includes `mygrafana.internal`
     ```
     brew install mkcert nss
-    mkcert -install
+    mkcert -install # if first time
     cd /Volumes/data/personal/mykube/grafana
     mkcert mygrafana.internal
     ```
