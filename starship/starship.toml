@@ -1,0 +1,66 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+format = """
+$all$fill$status$time
+$shell$character"""
+
+# Replace the '❯' symbol in the prompt with '➜'
+[character] # The name of the module we are configuring is 'character'
+success_symbol = '[➜](bold green)' # The 'success_symbol' segment is being set to '➜' with the color 'bold green'
+
+[username]
+show_always = true
+
+[hostname]
+ssh_only = false
+# format = '[$hostname-wsl]($style) in '
+
+[shell]
+disabled = false
+
+[conda]
+ignore_base = false
+
+[scala]
+detect_folders = []
+
+[maven]
+format = "via [maven $symbol$version]($style) "
+symbol = "🅼 "
+style = "bold bright-cyan"
+
+[custom.maven_scala]
+command = '''C:\Users\nathan\.config\starship-maven-scala.cmd'''
+shell = ["cmd", "/C"]
+when = "if not exist pom.xml (exit /b 1) else (if exist src\\main\\scala\\nul (exit /b 0) else (exit /b 1))"
+symbol = "🆂 "
+style = "red bold"
+format = "via [$symbol$output]($style) "
+description = "Maven Scala source root"
+
+[fill]
+symbol = "⋯"
+style = "fg:#6c6c6c"
+
+[line_break]
+disabled = true
+
+[status]
+disabled = false
+success_symbol = "✅"
+format = '[$symbol]($style) '
+
+[time]
+disabled = false
+format = 'at [$time]($style) '
+time_format = "%Y-%m-%d %T"
+
+[custom.date]
+disabled = true
+command = "get-date -format 'yyyy-MM-dd'"
+when = "true"
+format = "[$output]($style) "
