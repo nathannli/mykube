@@ -58,3 +58,23 @@ helm install openwebui open-webui/open-webui --namespace openwebui --create-name
 # 4. Cleanup:
 #   - Uninstall the deployment:
 #       helm uninstall openwebui -n openwebui
+
+# 5. Update Open WebUI:
+#   - Refresh the chart repository:
+#       helm repo update
+#
+#   - Upgrade the existing release using the current release values:
+#       helm upgrade openwebui open-webui/open-webui \
+#         --namespace openwebui \
+#         --reuse-values
+#
+#   - Wait for the Open WebUI workload to finish rolling out:
+#       kubectl rollout status statefulset/openwebui-open-webui -n openwebui
+#
+#   - Verify the running image:
+#       kubectl get pod -n openwebui \
+#         -l app.kubernetes.io/component=open-webui \
+#         -o jsonpath='{.items[0].spec.containers[0].image}{"\n"}'
+#
+#   - Re-apply the NodePort service manifest if needed:
+#       kubectl apply -f openwebui/kubectl-yaml/
