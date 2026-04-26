@@ -44,9 +44,14 @@ disabled = true
 disabled = true
 
 [custom.maven_scala]
-command = "/home/nathan/.config/starship-maven-scala.sh"
-shell = ["bash", "--noprofile", "--norc"]
-when = "test -f pom.xml && test -d src/main/scala"
+# pwsh
+command = '''C:\Users\nathan\.config\starship-maven-scala.cmd'''
+shell = ["cmd", "/C"]
+when = "if not exist pom.xml (exit /b 1) else (if exist src\\main\\scala\\nul (exit /b 0) else (exit /b 1))"
+# linux
+# command = "/home/nathan/.config/starship-maven-scala.sh"
+# shell = ["bash", "--noprofile", "--norc"]
+# when = "test -f pom.xml && test -d src/main/scala"
 symbol = "🆂 "
 style = "red bold"
 format = "via [$symbol$output]($style) "
@@ -68,4 +73,3 @@ format = '[$symbol]($style) '
 disabled = false
 format = 'at [$time]($style) '
 time_format = "%Y-%m-%d %T"
-
