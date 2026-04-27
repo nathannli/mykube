@@ -16,6 +16,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: openwebui-open-webui-nodeport
+            name: openwebui-open-webui
             port:
               number: 8080
