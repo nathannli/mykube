@@ -10,3 +10,7 @@ homeassistant/config
 .vscode
 .env
 **/tls-secret.yaml
+.claude
+**.pem
+**beszel_data**
+transmission/config/
