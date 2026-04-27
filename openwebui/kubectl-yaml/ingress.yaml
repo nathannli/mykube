@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openwebui-ingress
+  namespace: openwebui
+spec:
+  tls:
+  - hosts:
+    - myopenwebui.internal
+    secretName: openwebui-tls
+  rules:
+  - host: myopenwebui.internal
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: openwebui-open-webui-nodeport
+            port:
+              number: 8080
