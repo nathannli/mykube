@@ -25,6 +25,8 @@ from time_of_use_electricity_pricing import TimeOfUseElectricityPricing
 CONFIG = Config()
 LOGGER = Logger().get_logger()
 LOGGER.info(f"Loaded config: {CONFIG}")
+if not CONFIG.ENABLE_SOUND_DEVICE_CHECK:
+    LOGGER.info("Skipping sound device check because ENABLE_SOUND_DEVICE_CHECK is disabled")
 TOU_PRICING = TimeOfUseElectricityPricing()
 
 app = Flask(__name__)
@@ -326,8 +328,6 @@ async def trigger_power_off_desktops_async():
             LOGGER.warning("ENABLE_SOUND_DEVICE_CHECK is true but KP125M_SOUND_IP is not set")
             return
         await power_off_sound_KP125M(CONFIG.KP125M_SOUND_IP)
-    if result and not CONFIG.ENABLE_SOUND_DEVICE_CHECK:
-        LOGGER.info("Skipping sound device check because ENABLE_SOUND_DEVICE_CHECK is disabled")
 
 
 @app.route("/poweroff", methods=["POST"])
