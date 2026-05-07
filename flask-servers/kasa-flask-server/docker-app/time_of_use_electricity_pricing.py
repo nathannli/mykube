@@ -43,13 +43,13 @@ class TimeOfUseElectricityPricing:
         },
         SUMMER: {
             WEEKDAY: {
-                **{h: 0.076 for h in range(0, 7)},
-                **{h: 0.122 for h in range(7, 11)},
-                **{h: 0.158 for h in range(11, 17)},
-                **{h: 0.122 for h in range(17, 19)},
-                **{h: 0.076 for h in range(19, 24)},
+                **{h: 0.098 for h in range(0, 7)},
+                **{h: 0.157 for h in range(7, 11)},
+                **{h: 0.203 for h in range(11, 17)},
+                **{h: 0.157 for h in range(17, 19)},
+                **{h: 0.098 for h in range(19, 24)},
             },
-            WEEKEND: {h: 0.076 for h in range(24)},
+            WEEKEND: {h: 0.098 for h in range(24)},
         }
     }
 
