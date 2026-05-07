@@ -1,0 +1,18 @@
+[project]
+name = "kasa-flask-server"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "python-kasa",
+    "prometheus_client",
+    "flask",
+    "requests",
+    "anyio",
+    "tzdata",
+    "pytz",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]

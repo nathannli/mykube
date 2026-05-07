@@ -100,3 +100,8 @@ class TimeOfUseElectricityPricing:
         """
         return str_builder
 
+
+if __name__ == "__main__":
+    pricing = TimeOfUseElectricityPricing()
+    print(f"${pricing.get_current_price():.3f}/kWh")
+
