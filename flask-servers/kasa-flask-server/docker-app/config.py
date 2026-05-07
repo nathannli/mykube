@@ -23,7 +23,7 @@ class Config:
     KP125M_SOUND_IP: str | None = os.getenv("KP125M_SOUND_IP")
     ENABLE_SOUND_DEVICE_CHECK: bool = KP125M_SOUND_IP is not None
     KP125M_IPS_RAW: str = require_env("KP125M_IPS")
-    KP125M_IPS: list[str] = [x.strip() for x in KP125M_IPS_RAW.split('-') if x != '']
+    KP125M_IPS: list[str] = [x.strip() for x in KP125M_IPS_RAW.split("-") if x != ""]
     NAME = "kasapower"
     KASA_USERNAME = require_env("KASA_USERNAME")
     KASA_PASSWORD = require_env("KASA_PASSWORD")
@@ -41,7 +41,7 @@ class Config:
     DESKTOPS = ["13k", "14kf", "9950x", "intel", "7950x", "14ks"]
     RADIATOR_PLUG_TYPE = "KP125M"
 
-    LOW_POWER_THRESHOLD_WATTS = 5
+    LOW_POWER_THRESHOLD_WATTS = 7
 
     # discord msg alerts
     DISCORD_ALERT_BOT_URL = "http://discord-general-channel-alert-bot-node-port.discord-bots.svc.cluster.local:5000/alert"
