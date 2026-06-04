@@ -38,7 +38,7 @@ class Config:
 
     HS300_DEVICE_NAME_LIST = ["13k", "14kf", "9950x", "7950x", "14ks", "intel"]
     MONITORS = ["odyssey-g9-57", "alienware", "LGDualUp", "odyssey-g9-49", "LG45", "kuycon"]
-    DESKTOPS = ["13k", "14kf", "9950x", "intel", "7950x", "14ks"]
+    DESKTOPS = ["13k", "14kf", "9950x", "intel", "7950x", "14ks", "5950x"]
     RADIATOR_PLUG_TYPE = "KP125M"
 
     LOW_POWER_THRESHOLD_WATTS = 7
