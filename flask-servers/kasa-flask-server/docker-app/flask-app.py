@@ -25,8 +25,6 @@ from time_of_use_electricity_pricing import TimeOfUseElectricityPricing
 CONFIG = Config()
 LOGGER = Logger().get_logger()
 LOGGER.info(f"Loaded config: {CONFIG}")
-if not CONFIG.ENABLE_SOUND_DEVICE_CHECK:
-    LOGGER.info("Skipping sound device check because ENABLE_SOUND_DEVICE_CHECK is disabled")
 TOU_PRICING = TimeOfUseElectricityPricing()
 
 app = Flask(__name__)
@@ -158,10 +156,7 @@ async def check_all_desktop_plugs_are_off_HS300() -> bool:
 
 
 async def power_off_radiator() -> bool:
-    """
-    powers off radiator plug if all other plugs are off
-    and powers off Sound plug if the above is true
-    """
+    """Powers off radiator plug if all other plugs are off."""
     plug_name: str = "radiator"
     radiator_plug_type = CONFIG.RADIATOR_PLUG_TYPE.strip().upper()
     all_plugs_are_off = await check_all_desktop_plugs_are_off_HS300() and await check_all_desktop_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
@@ -236,22 +231,6 @@ async def turn_off_desktop_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
     return True
 
 
-async def power_off_sound_KP125M(ip: str) -> bool:
-    """
-    return true if off
-    return false if error or still on
-    """
-    try:
-        async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
-            if dev.alias and dev.alias.lower() == "sound" and dev.is_on:
-                await dev.turn_off()
-                await send_discord_message(f"Plug {dev.alias} turned off")
-        return True
-    except Exception as e:
-        log_device_error(ip, e)
-        return False
-
-
 async def get_metrics_KP125M(ip_list: list[str]) -> dict[Any, Any]:
     output_dict = {}
     for ip in ip_list:
@@ -322,12 +301,7 @@ async def trigger_power_off_desktops_async():
     """Execute power off sequence for all devices."""
     await turn_off_desktop_plugs_if_no_power_HS300(CONFIG.HS300_IP)
     await turn_off_desktop_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS)
-    result = await power_off_radiator()
-    if result and CONFIG.ENABLE_SOUND_DEVICE_CHECK:
-        if CONFIG.KP125M_SOUND_IP is None:
-            LOGGER.warning("ENABLE_SOUND_DEVICE_CHECK is true but KP125M_SOUND_IP is not set")
-            return
-        await power_off_sound_KP125M(CONFIG.KP125M_SOUND_IP)
+    await power_off_radiator()
 
 
 @app.route("/poweroff", methods=["POST"])

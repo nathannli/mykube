@@ -20,8 +20,6 @@ def get_bool_env(name: str, default: bool = False) -> bool:
 class Config:
     # user config
     HS300_IP: str = require_env("HS300_IP")
-    KP125M_SOUND_IP: str | None = os.getenv("KP125M_SOUND_IP")
-    ENABLE_SOUND_DEVICE_CHECK: bool = KP125M_SOUND_IP is not None
     KP125M_IPS_RAW: str = require_env("KP125M_IPS")
     KP125M_IPS: list[str] = [x.strip() for x in KP125M_IPS_RAW.split("-") if x != ""]
     NAME = "kasapower"
@@ -48,7 +46,5 @@ class Config:
 
     def __repr__(self):
         return (
-            f"Config(HS300_IP={self.HS300_IP}, KP125M_IPS={self.KP125M_IPS}, "
-            f"ENABLE_SOUND_DEVICE_CHECK={self.ENABLE_SOUND_DEVICE_CHECK}, "
-            f"KP125M_SOUND_IP={self.KP125M_SOUND_IP})"
+            f"Config(HS300_IP={self.HS300_IP}, KP125M_IPS={self.KP125M_IPS})"
         )

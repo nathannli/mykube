@@ -30,12 +30,6 @@ spec:
                 configMapKeyRef:
                   name: kasa-config
                   key: KP125M_IPS
-            - name: KP125M_SOUND_IP
-              valueFrom:
-                configMapKeyRef:
-                  name: kasa-config
-                  key: KP125M_SOUND_IP
-                  optional: true
             - name: KASA_USERNAME
               valueFrom:
                 secretKeyRef:
