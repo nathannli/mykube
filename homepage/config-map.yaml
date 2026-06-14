@@ -60,7 +60,7 @@ data:
             - rogers-modem:
                 - href: https://10.20.0.1/
             - flink-cluster-webui:
-              - href: https://10.20.0.170:8081/
+              - href: http://10.20.0.170:8081/
 
     services.yaml: ""
         # - My First Group:
