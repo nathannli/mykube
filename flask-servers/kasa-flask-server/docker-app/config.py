@@ -35,9 +35,15 @@ class Config:
     )
 
     HS300_DEVICE_NAME_LIST = ["13k", "14kf", "9950x", "7950x", "14ks", "intel"]
-    MONITORS = ["odyssey-g9-57", "alienware", "LGDualUp", "odyssey-g9-49", "LG45", "kuycon"]
+    MONITORS = [
+        "odyssey-g9-57",
+        "alienware",
+        "LGDualUp",
+        "odyssey-g9-49",
+        "LG45",
+        "kuycon",
+    ]
     DESKTOPS = ["13k", "14kf", "9950x", "intel", "7950x", "14ks", "5950x", "9600k"]
-    RADIATOR_PLUG_TYPE = "KP125M"
 
     LOW_POWER_THRESHOLD_WATTS = 7
 
@@ -45,6 +51,4 @@ class Config:
     DISCORD_ALERT_BOT_URL = "http://discord-general-channel-alert-bot-node-port.discord-bots.svc.cluster.local:5000/alert"
 
     def __repr__(self):
-        return (
-            f"Config(HS300_IP={self.HS300_IP}, KP125M_IPS={self.KP125M_IPS})"
-        )
+        return f"Config(HS300_IP={self.HS300_IP}, KP125M_IPS={self.KP125M_IPS})"

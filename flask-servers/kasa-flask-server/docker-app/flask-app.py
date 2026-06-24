@@ -42,7 +42,9 @@ async def send_discord_message(message: str) -> None:
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(
             None,
-            lambda: requests.post(CONFIG.DISCORD_ALERT_BOT_URL, json=payload_dict, timeout=5)
+            lambda: requests.post(
+                CONFIG.DISCORD_ALERT_BOT_URL, json=payload_dict, timeout=5
+            ),
         )
     except Exception as e:
         LOGGER.error(f"Failed to send Discord message: {e}")
@@ -58,21 +60,27 @@ def log_device_error(ip: str, error: Exception, context: str = "Got Nothing"):
     LOGGER.error(f"IP: {ip} ------------ {context}: error: {error}")
 
 
-async def connect_to_device(device_config: DeviceConfig, ip: str, max_retries: int = 3) -> Device:
+async def connect_to_device(
+    device_config: DeviceConfig, ip: str, max_retries: int = 3
+) -> Device:
     """Connect to a device with retry logic."""
     for attempt in range(max_retries):
         try:
             return await Device.connect(config=device_config)
         except (TimeoutError, OSError, _ConnectionError) as e:
             if attempt < max_retries - 1:
-                LOGGER.warning(f"IP: {ip} - Connection error on attempt {attempt + 1}/{max_retries}, retrying in 10 seconds: {e}")
+                LOGGER.warning(
+                    f"IP: {ip} - Connection error on attempt {attempt + 1}/{max_retries}, retrying in 10 seconds: {e}"
+                )
                 await asyncio.sleep(10)
             else:
                 LOGGER.error(f"IP: {ip} - Failed after {max_retries} attempts: {e}")
                 raise
 
 
-async def connect_to_kp125m_device(ip: str, timeout: int = 10, max_retries: int = 3) -> Device:
+async def connect_to_kp125m_device(
+    ip: str, timeout: int = 10, max_retries: int = 3
+) -> Device:
     """Connect to a KP125M device with credentials, retrying on timeout."""
     device_config = DeviceConfig(
         host=ip,
@@ -85,7 +93,9 @@ async def connect_to_kp125m_device(ip: str, timeout: int = 10, max_retries: int 
     return await connect_to_device(device_config, ip, max_retries)
 
 
-async def connect_to_hs300_device(ip: str, timeout: int = 10, max_retries: int = 3) -> Device:
+async def connect_to_hs300_device(
+    ip: str, timeout: int = 10, max_retries: int = 3
+) -> Device:
     """Connect to an HS300 device, retrying on timeout."""
     device_config = DeviceConfig(host=ip, timeout=timeout)
     return await connect_to_device(device_config, ip, max_retries)
@@ -143,7 +153,9 @@ async def turn_off_desktop_plugs_if_no_power_HS300(ip: str) -> bool:
 
 async def check_all_desktop_plugs_are_off_HS300() -> bool:
     try:
-        async with managed_device_connection(connect_to_hs300_device, CONFIG.HS300_IP) as dev:
+        async with managed_device_connection(
+            connect_to_hs300_device, CONFIG.HS300_IP
+        ) as dev:
             for plug in dev.children:
                 if should_manage_plug(plug):
                     if plug.is_on:
@@ -152,51 +164,6 @@ async def check_all_desktop_plugs_are_off_HS300() -> bool:
         return True
     except Exception as e:
         log_device_error(CONFIG.HS300_IP, e)
-        return False
-
-
-async def power_off_radiator() -> bool:
-    """Powers off radiator plug if all other plugs are off."""
-    plug_name: str = "radiator"
-    radiator_plug_type = CONFIG.RADIATOR_PLUG_TYPE.strip().upper()
-    all_plugs_are_off = await check_all_desktop_plugs_are_off_HS300() and await check_all_desktop_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
-    if all_plugs_are_off:
-        if radiator_plug_type == "HS300":
-            try:
-                async with managed_device_connection(connect_to_hs300_device, CONFIG.HS300_IP) as dev:
-                    for plug in dev.children:
-                        if plug.alias is not None and plug.alias.lower() == plug_name.lower():
-                            if plug.is_on:
-                                await plug.turn_off()
-                                await send_discord_message(f"Plug {plug.alias} turned off")
-                            return True
-                    LOGGER.warning(f"Plug {plug_name} not found on HS300")
-                    return False
-            except Exception as e:
-                log_device_error(CONFIG.HS300_IP, e)
-                return False
-
-        if radiator_plug_type == "KP125M":
-            for ip in CONFIG.KP125M_IPS:
-                try:
-                    async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
-                        if dev.alias is not None and dev.alias.lower() == plug_name.lower():
-                            if dev.is_on:
-                                await dev.turn_off()
-                                await send_discord_message(f"Plug {dev.alias} turned off")
-                            return True
-                except Exception as e:
-                    log_device_error(ip, e)
-                    return False
-            LOGGER.warning(f"Plug {plug_name} not found in KP125M_IPS")
-            return False
-
-        LOGGER.error(
-            "Unsupported RADIATOR_PLUG_TYPE '%s' (expected HS300 or KP125M)",
-            CONFIG.RADIATOR_PLUG_TYPE,
-        )
-        return False
-    else:
         return False
 
 
@@ -219,7 +186,10 @@ async def turn_off_desktop_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
             async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
                 if should_manage_plug(dev) and dev.is_on:
                     device_energy = dev.modules[Module.Energy]
-                    if device_energy.current_consumption < CONFIG.LOW_POWER_THRESHOLD_WATTS:
+                    if (
+                        device_energy.current_consumption
+                        < CONFIG.LOW_POWER_THRESHOLD_WATTS
+                    ):
                         await dev.turn_off()
                         await send_discord_message(f"Plug {dev.alias} turned off")
                     else:
@@ -294,14 +264,12 @@ def metrics():
     # LOGGER.info(TOU_PRICING)
 
     return generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
-    
 
 
 async def trigger_power_off_desktops_async():
     """Execute power off sequence for all devices."""
     await turn_off_desktop_plugs_if_no_power_HS300(CONFIG.HS300_IP)
     await turn_off_desktop_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS)
-    await power_off_radiator()
 
 
 @app.route("/poweroff", methods=["POST"])
