@@ -1,11 +1,11 @@
 import asyncio
 import re
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 from typing import Any
 
 import requests
 from config import Config
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from kasa import (
     Credentials,
     Device,
@@ -63,11 +63,17 @@ def log_device_error(ip: str, error: Exception, context: str = "Got Nothing"):
 async def connect_to_device(
     device_config: DeviceConfig, ip: str, max_retries: int = 3
 ) -> Device:
-    """Connect to a device with retry logic."""
+    """Connect to and refresh a device with retry logic."""
     for attempt in range(max_retries):
+        dev = None
         try:
-            return await Device.connect(config=device_config)
-        except (TimeoutError, OSError, _ConnectionError) as e:
+            dev = await Device.connect(config=device_config)
+            await dev.update()
+            return dev
+        except Exception as e:
+            if dev is not None:
+                with suppress(Exception):
+                    await dev.disconnect()
             if attempt < max_retries - 1:
                 LOGGER.warning(
                     f"IP: {ip} - Connection error on attempt {attempt + 1}/{max_retries}, retrying in 10 seconds: {e}"
@@ -106,7 +112,6 @@ async def managed_device_connection(connect_func, *args, **kwargs):
     """Context manager for device connections with automatic disconnect."""
     dev = await connect_func(*args, **kwargs)
     try:
-        await dev.update()
         yield dev
     finally:
         await dev.disconnect()
@@ -275,6 +280,12 @@ async def trigger_power_off_desktops_async():
 @app.route("/poweroff", methods=["POST"])
 def trigger_power_off():
     try:
+        LOGGER.info(
+            "Poweroff requested from remote_addr=%s x_forwarded_for=%s user_agent=%s",
+            request.remote_addr,
+            request.headers.get("X-Forwarded-For"),
+            request.headers.get("User-Agent"),
+        )
         asyncio.run(trigger_power_off_desktops_async())
         return jsonify({"status": "success", "message": "poweroff success"}), 200
     except Exception as e:
