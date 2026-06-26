@@ -21,8 +21,3 @@ data:
       - job_name: '7950x_aquacomputer_highflow_node_exporter'
         static_configs:
           - targets: ['10.20.0.181:9100']
-
-    storage:
-      tsdb:
-        retention:
-          time: 90d
