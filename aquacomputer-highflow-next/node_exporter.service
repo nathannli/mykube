@@ -1,0 +1,17 @@
+# /etc/systemd/system/node_exporter.service
+
+[Unit]
+Description=Prometheus Node Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=nathan
+Group=nathan
+ExecStart=/home/nathan/node_exporter-1.10.2.linux-amd64/node_exporter --collector.textfile.directory=/var/lib/node_exporter/textfile_collector
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
