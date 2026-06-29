@@ -55,12 +55,7 @@ kafka:
       # default-value-serde: SchemaRegistry  # Default SerDe for message values
 
       # Monitoring and metrics collection from the cluster
-      metrics:
-        type: JMX  # Available options: JMX or PROMETHEUS
-        port: 9997  # Port to collect JMX metrics
-        # username: Auth username
-        # password: Auth password
-        # ssl: false  # Whether to use SSL for metrics endpoint
+      # metrics: # DISABLED - broker has no JMX on 9997, causes container crash (exit 255)
         # keystore-location: path/to/keystore/file.jks
         # keystore-password: password
 

@@ -5,6 +5,11 @@ services:
     ports:
       - 8081:8080
     environment:
-       DYNAMIC_CONFIG_ENABLED: 'true'
+       DYNAMIC_CONFIG_ENABLED: "true"
     volumes:
       - /home/nathan/git/mykube/kafbat/config.yaml:/etc/kafkaui/dynamic_config.yaml
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
