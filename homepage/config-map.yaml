@@ -61,6 +61,10 @@ data:
                 - href: https://10.20.0.1/
             - flink-cluster-webui:
               - href: http://10.20.0.170:8081/
+            - t3code:
+                - href: http://10.20.0.127:36413/
+            - hermes-webui:
+                - href: http://10.20.0.127:8787/
 
     services.yaml: ""
         # - My First Group:
