@@ -26,8 +26,6 @@ data:
                 - href: http://10.20.0.169:30081/
             - OpenWebUI:
                 - href: http://10.20.0.169:30809/
-            - OpenClaw:
-                - href: https://nathanmacmini.tail5666ac.ts.net/openclaw
             - Home Assistant:
                 - href: http://10.20.0.169:8123/
             - Prometheus:
