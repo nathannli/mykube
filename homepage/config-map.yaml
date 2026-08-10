@@ -65,6 +65,8 @@ data:
                 - href: http://10.20.0.127:8787/
             - Sunshine:
                 - href: https://10.20.0.226:47990/
+            - local opencodex server:
+                - href: http://localhost:10100/#dashboard
 
     services.yaml: ""
         # - My First Group:
