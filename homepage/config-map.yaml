@@ -63,6 +63,8 @@ data:
                 - href: http://10.20.0.127:36413/
             - hermes-webui:
                 - href: http://10.20.0.127:8787/
+            - Sunshine:
+                - href: https://10.20.0.226:47990/
 
     services.yaml: ""
         # - My First Group:
