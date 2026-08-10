@@ -1,0 +1,18 @@
+services:
+  browserless:
+    image: ghcr.io/browserless/chromium:v2.55.3
+    container_name: browserless
+    restart: unless-stopped
+    init: true
+    env_file:
+      - .env
+    environment:
+      ALLOW_GET: "false"
+      CONCURRENT: "4"
+      CORS: "false"
+      ENABLE_DEBUGGER: "false"
+      QUEUED: "8"
+      TIMEOUT: "30000"
+    ports:
+      - "127.0.0.1:3000:3000"
+    shm_size: 1gb
