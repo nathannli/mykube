@@ -3,7 +3,7 @@ name = "kasa-flask-server"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
-    "python-kasa",
+    "python-kasa @ https://github.com/nathannli/python-kasa/archive/38a48ebeb25418b027b25251128c965d5f394063.zip",
     "prometheus_client",
     "flask",
     "requests",

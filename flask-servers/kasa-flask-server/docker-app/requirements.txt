@@ -1,4 +1,4 @@
-python-kasa
+https://github.com/nathannli/python-kasa/archive/38a48ebeb25418b027b25251128c965d5f394063.zip
 prometheus_client
 flask
 requests

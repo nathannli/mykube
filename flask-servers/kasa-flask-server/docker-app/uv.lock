@@ -418,6 +418,18 @@ wheels = [
 ]
 
 [[package]]
+name = "ecdsa"
+version = "0.19.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "six" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/25/ca/8de7744cb3bc966c85430ca2d0fcaeea872507c6a4cf6e007f7fe269ed9d/ecdsa-0.19.2.tar.gz", hash = "sha256:62635b0ac1ca2e027f82122b5b81cb706edc38cd91c63dda28e4f3455a2bf930", size = 202432, upload-time = "2026-03-26T09:58:17.675Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/51/79/119091c98e2bf49e24ed9f3ae69f816d715d2904aefa6a2baa039a2ba0b0/ecdsa-0.19.2-py2.py3-none-any.whl", hash = "sha256:840f5dc5e375c68f36c1a7a5b9caad28f95daa65185c9253c0c08dd952bb7399", size = 150818, upload-time = "2026-03-26T09:58:15.808Z" },
+]
+
+[[package]]
 name = "flask"
 version = "3.1.3"
 source = { registry = "https://pypi.org/simple" }
@@ -602,7 +614,7 @@ requires-dist = [
     { name = "anyio" },
     { name = "flask" },
     { name = "prometheus-client" },
-    { name = "python-kasa" },
+    { name = "python-kasa", url = "https://github.com/nathannli/python-kasa/archive/38a48ebeb25418b027b25251128c965d5f394063.zip" },
     { name = "pytz" },
     { name = "requests" },
     { name = "tzdata" },
@@ -824,6 +836,15 @@ wheels = [
 ]
 
 [[package]]
+name = "passlib"
+version = "1.7.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b6/06/9da9ee59a67fae7761aab3ccc84fa4f3f33f125b370f1ccdb915bf967c11/passlib-1.7.4.tar.gz", hash = "sha256:defd50f72b65c5402ab2c573830a6978e5f202ad0d984793c8dde2c4152ebe04", size = 689844, upload-time = "2020-10-08T19:00:52.121Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3b/a4/ab6b7589382ca3df236e03faa71deac88cae040af60c071a78d254a62172/passlib-1.7.4-py2.py3-none-any.whl", hash = "sha256:aa6bca462b8d8bda89c70b382f0c298a20b5560af6cbfa2dce410c0a2fb669f1", size = 525554, upload-time = "2020-10-08T19:00:49.856Z" },
+]
+
+[[package]]
 name = "pluggy"
 version = "1.6.0"
 source = { registry = "https://pypi.org/simple" }
@@ -977,18 +998,33 @@ wheels = [
 [[package]]
 name = "python-kasa"
 version = "0.10.2"
-source = { registry = "https://pypi.org/simple" }
+source = { url = "https://github.com/nathannli/python-kasa/archive/38a48ebeb25418b027b25251128c965d5f394063.zip" }
 dependencies = [
     { name = "aiohttp" },
     { name = "asyncclick" },
     { name = "cryptography" },
+    { name = "ecdsa" },
     { name = "mashumaro" },
+    { name = "passlib" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/09/44/b3c88bb2560c55e57078aed1777ead1b60981e6d852c9d8b9c7351bd5c6e/python_kasa-0.10.2.tar.gz", hash = "sha256:4a75b72dc354b43b0b038d5f8ca142049879c76415728a9f24473fb15af45562", size = 458421, upload-time = "2025-02-12T19:32:12.025Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f7/94/69edbee0052d2eb2d68dbb80bc1f344085023e23b6889e95a4401da7ad55/python_kasa-0.10.2-py3-none-any.whl", hash = "sha256:b57af2ce84b8da7c1d5f296e4a18be4246b500b5633acd5a85200612f81a38ea", size = 261905, upload-time = "2025-02-12T19:32:09.744Z" },
+sdist = { hash = "sha256:2a342df46ffceb8c2ce9af92162e554e088614db049966539cbfa45f2a901484" }
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3" },
+    { name = "asyncclick", specifier = ">=8.1.7" },
+    { name = "cryptography", specifier = ">=1.9" },
+    { name = "ecdsa", specifier = ">=0.19.1" },
+    { name = "kasa-crypt", marker = "extra == 'speedups'", specifier = ">=0.2.0" },
+    { name = "mashumaro", specifier = ">=3.20" },
+    { name = "orjson", marker = "extra == 'speedups'", specifier = ">=3.11.1" },
+    { name = "passlib", specifier = ">=1.7.4" },
+    { name = "ptpython", marker = "extra == 'shell'" },
+    { name = "rich", marker = "extra == 'shell'" },
+    { name = "tzdata", marker = "sys_platform == 'win32'", specifier = ">=2024.2" },
 ]
+provides-extras = ["speedups", "shell"]
 
 [[package]]
 name = "pytz"
@@ -1012,6 +1048,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5f/a4/98b9c7c6428a668bf7e42ebb7c79d576a1c3c1e3ae2d47e674b468388871/requests-2.33.1.tar.gz", hash = "sha256:18817f8c57c6263968bc123d237e3b8b08ac046f5456bd1e307ee8f4250d3517", size = 134120, upload-time = "2026-03-30T16:09:15.531Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d7/8e/7540e8a2036f79a125c1d2ebadf69ed7901608859186c856fa0388ef4197/requests-2.33.1-py3-none-any.whl", hash = "sha256:4e6d1ef462f3626a1f0a0a9c42dd93c63bad33f9f1c1937509b8c5c8718ab56a", size = 64947, upload-time = "2026-03-30T16:09:13.83Z" },
+]
+
+[[package]]
+name = "six"
+version = "1.17.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81", size = 34031, upload-time = "2024-12-04T17:35:28.174Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274", size = 11050, upload-time = "2024-12-04T17:35:26.475Z" },
 ]
 
 [[package]]

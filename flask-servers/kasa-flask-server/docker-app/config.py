@@ -33,6 +33,20 @@ class Config:
         https=False,
         http_port=80,
     )
+    TPAP_KP125M_IPS = ["10.20.0.115"]
+    KASA_TPAP_KP125M_DEVICE_CONNECT_PARAM = DeviceConnectionParameters(
+        device_family=DeviceFamily.SmartKasaPlug,
+        encryption_type=DeviceEncryptionType.Tpap,
+        login_version=2,
+        https=False,
+        http_port=80,
+    )
+
+    @classmethod
+    def get_kp125m_device_connect_param(cls, ip: str) -> DeviceConnectionParameters:
+        if ip in cls.TPAP_KP125M_IPS:
+            return cls.KASA_TPAP_KP125M_DEVICE_CONNECT_PARAM
+        return cls.KASA_KP125M_DEVICE_CONNECT_PARAM
 
     HS300_DEVICE_NAME_LIST = ["13k", "14kf", "9950x", "7950x", "14ks", "intel"]
     MONITORS = [

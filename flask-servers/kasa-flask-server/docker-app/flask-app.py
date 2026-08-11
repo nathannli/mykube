@@ -93,7 +93,7 @@ async def connect_to_kp125m_device(
         credentials=Credentials(
             username=CONFIG.KASA_USERNAME, password=CONFIG.KASA_PASSWORD
         ),
-        connection_type=CONFIG.KASA_KP125M_DEVICE_CONNECT_PARAM,
+        connection_type=CONFIG.get_kp125m_device_connect_param(ip),
         timeout=timeout,
     )
     return await connect_to_device(device_config, ip, max_retries)
