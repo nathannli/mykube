@@ -12,7 +12,6 @@ from kasa import (
     DeviceConfig,
     Module,
 )
-from kasa.exceptions import _ConnectionError
 from my_logger import Logger
 from prometheus_client import (
     CONTENT_TYPE_LATEST,
@@ -217,15 +216,9 @@ async def get_metrics_KP125M(ip_list: list[str]) -> dict[Any, Any]:
                     energy_consumption = energy.current_consumption
                     if energy_consumption is not None:
                         output_dict[device_alias] = int(energy_consumption)
-        except _ConnectionError as ce:
-            log_device_error(ip, ce, "Connection Error")
-            continue
-        except TimeoutError as te:
-            log_device_error(ip, te, "Timeout Error")
-            continue
         except Exception as e:
             log_device_error(ip, e)
-            raise e
+            continue
     return output_dict
 
 
