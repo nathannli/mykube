@@ -33,7 +33,7 @@ class Config:
         https=False,
         http_port=80,
     )
-    TPAP_KP125M_IPS = ["10.20.0.115"]
+    TPAP_KP125M_IPS = []
     KASA_TPAP_KP125M_DEVICE_CONNECT_PARAM = DeviceConnectionParameters(
         device_family=DeviceFamily.SmartKasaPlug,
         encryption_type=DeviceEncryptionType.Tpap,
