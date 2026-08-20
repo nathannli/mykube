@@ -65,8 +65,10 @@ data:
                 - href: http://10.20.0.127:8787/
             - Sunshine:
                 - href: https://10.20.0.226:47990/
-            - DeepSeek Harness (ginko):
+            - DSH (tailscale):
                 - href: https://ginko.tail5666ac.ts.net/
+            - DSH (local):
+                - href: http://10.20.0.177:3080/
             - local opencodex server:
                 - href: http://localhost:10100/#dashboard
 
