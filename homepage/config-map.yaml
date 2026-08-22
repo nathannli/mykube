@@ -71,6 +71,14 @@ data:
                 - href: http://10.20.0.177:3080/
             - local opencodex server:
                 - href: http://localhost:10100/#dashboard
+            - unsloth macmini:
+                - href: http://10.20.0.213:8888
+            - unsloth 14kf:
+                - href: http://10.20.0.226:8888
+            - unsloth 14ks:
+                - href: http://10.20.0.216:8888
+            - unsloth 7950:
+                - href: http://10.20.0.125:8888
 
     services.yaml: ""
         # - My First Group:
