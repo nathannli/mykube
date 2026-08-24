@@ -15,7 +15,7 @@ data:
           brightness: 100
           opacity: 60
           saturation: 70
-        theme: light
+        theme: dark
         color: neutral
     custom.css: ""
     custom.js: ""
