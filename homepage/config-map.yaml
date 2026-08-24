@@ -10,7 +10,7 @@ data:
         mode: cluster
     settings.yaml: |
         background: 
-          image: /images/beautiful-anime-landscape-cartoon-scene.jpg
+          image: /images/pure_black.png
           blur: sm
           brightness: 100
           opacity: 60
@@ -63,10 +63,6 @@ data:
                 - href: http://10.20.0.127:8787/
             - Sunshine:
                 - href: https://10.20.0.226:47990/
-            - DSH (tailscale):
-                - href: https://ginko.tail5666ac.ts.net/
-            - DSH (local):
-                - href: http://10.20.0.177:3080/
             - local opencodex server:
                 - href: http://localhost:10100/#dashboard
             - unsloth macmini:
