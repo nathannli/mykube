@@ -23,15 +23,15 @@ data:
     bookmarks.yaml: |
         - Shortcuts:
             - Homepage:
-                - href: http://10.20.0.169:30081/
+                - href: https://myhomepage.internal/
             - OpenWebUI:
-                - href: http://10.20.0.169:30809/
+                - href: https://myopenwebui.internal/
             - Home Assistant:
                 - href: http://10.20.0.169:8123/
             - Prometheus:
                 - href: http://10.20.0.169:31090/
             - Grafana:
-                - href: http://10.20.0.169:3000/
+                - href: https://mygrafana.internal/
             - headlamp:
                 - href: http://10.20.0.169:30808/
                   description: "generate token: kubectl create token headlamp-admin -n headlamp"
@@ -43,20 +43,16 @@ data:
                 - href: http://10.20.0.18:8080
             - nathanbook:
                 - href: http://10.20.0.75/UI/login
-            - metabase-myfinance:
-                - href: http://10.20.0.169:30080/dashboard/2-nathan-finance?date=past1years~
-                  description: "direct metabase link to your finance dashboard"
-            - metabase-parentsfinance:
-                - href: http://10.20.0.169:30080/dashboard/4-parents-dashboard
-                  description: "direct metabase link to parents finance dashboard"
+            - metabase:
+                - href: http://mymetabase.internal/
             - kafbat-ui:
                 - href: http://10.20.0.169:8081/
             - beszel-hub:
                 - href: http://10.20.0.169:8090/
             - xiaomi-router:
                 - href: http://10.20.0.140/
-            - rogers-modem:
-                - href: https://10.20.0.1/
+            - tplink routers:
+                - href: http://tplinkwifi.net/
             - flink-cluster-webui:
               - href: http://10.20.0.170:8081/
             - hermes-webui:
