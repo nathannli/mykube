@@ -26,4 +26,8 @@ ports:
   port: 8888
 endpoints:
 - addresses:
-  - 10.20.0.213
+  - 10.20.0.211
+  conditions:
+    ready: true
+    serving: true
+    terminating: false
