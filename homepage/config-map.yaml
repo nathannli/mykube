@@ -52,7 +52,7 @@ data:
             - xiaomi-router:
                 - href: http://10.20.0.140/
             - tplink routers:
-                - href: http://tplinkwifi.net/
+                - href: http://10.20.0.1/
             - flink-cluster-webui:
               - href: http://10.20.0.170:8081/
             - hermes-webui:
@@ -62,7 +62,7 @@ data:
             - local opencodex server:
                 - href: http://localhost:10100/#dashboard
             - unsloth macmini:
-                - href: http://10.20.0.213:8888
+                - href: http://unslothmac.internal
             - unsloth 14kf:
                 - href: http://10.20.0.226:8888
             - unsloth 14ks:
