@@ -1,111 +1,112 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: homepage
-    namespace: homepage
-    labels:
-        app.kubernetes.io/name: homepage
+  name: homepage
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
 data:
-    kubernetes.yaml: |
-        mode: cluster
-    settings.yaml: |
-        background: 
-          image: /images/pure_black.png
-          blur: sm
-          brightness: 100
-          opacity: 60
-          saturation: 70
-        theme: dark
-        color: neutral
-    custom.css: ""
-    custom.js: ""
+  kubernetes.yaml: |
+    mode: cluster
+  settings.yaml: |
+    background: 
+      image: /images/pure_black.png
+      blur: sm
+      brightness: 100
+      opacity: 60
+      saturation: 70
+    theme: dark
+    color: neutral
+  custom.css: ""
+  custom.js: ""
 
-    bookmarks.yaml: |
-        - Shortcuts:
-            - Homepage:
-                - href: https://myhomepage.internal/
-            - OpenWebUI:
-                - href: https://myopenwebui.internal/
-            - Home Assistant:
-                - href: http://10.20.0.169:8123/
-            - Prometheus:
-                - href: http://10.20.0.169:31090/
-            - Grafana:
-                - href: https://mygrafana.internal/
-            - headlamp:
-                - href: http://10.20.0.169:30808/
-                  description: "generate token: kubectl create token headlamp-admin -n headlamp"
-            - RPI5-Transmission:
-                - href: http://10.20.0.169:9091/
-            - RPI4-Transmission:
-                - href: http://10.20.0.203:9091/
-            - 315NAS:
-                - href: http://10.20.0.18:8080
-            - nathanbook:
-                - href: http://10.20.0.75/UI/login
-            - metabase:
-                - href: http://mymetabase.internal/
-            - kafbat-ui:
-                - href: http://10.20.0.169:8081/
-            - beszel-hub:
-                - href: http://10.20.0.169:8090/
-            - xiaomi-router:
-                - href: http://10.20.0.140/
-            - tplink routers:
-                - href: http://10.20.0.1/
-            - flink-cluster-webui:
-              - href: http://10.20.0.170:8081/
-            - hermes-webui:
-                - href: http://10.20.0.127:8787/
-            - Sunshine:
-                - href: https://10.20.0.226:47990/
-            - local opencodex server:
-                - href: http://localhost:10100/#dashboard
-            - unsloth macmini:
-                - href: http://unslothmac.internal
-            - unsloth 14kf:
-                - href: http://10.20.0.226:8888
-            - unsloth 14ks:
-                - href: http://10.20.0.216:8888
-            - unsloth 7950:
-                - href: http://10.20.0.125:8888
+  bookmarks.yaml: |
+    - Shortcuts:
+        - Homepage:
+            - href: https://myhomepage.internal/
+        - OpenWebUI:
+            - href: https://myopenwebui.internal/
+        - Home Assistant:
+            - href: http://10.20.0.169:8123/
+        - Prometheus:
+            - href: http://10.20.0.169:31090/
+        - Grafana:
+            - href: https://mygrafana.internal/
+        - headlamp:
+            - href: http://10.20.0.169:30808/
+              description: "generate token: kubectl create token headlamp-admin -n headlamp"
+        - RPI5-Transmission:
+            - href: http://10.20.0.169:9091/
+        - RPI4-Transmission:
+            - href: http://10.20.0.203:9091/
+        - 315NAS:
+            - href: http://10.20.0.18:8080
+        - nathanbook:
+            - href: http://10.20.0.75/UI/login
+        - metabase:
+            - href: http://mymetabase.internal/
+        - kafbat-ui:
+            - href: http://10.20.0.169:8081/
+        - beszel-hub:
+            - href: http://10.20.0.169:8090/
+        - xiaomi-router:
+            - href: http://10.20.0.140/
+        - tplink routers:
+            - href: http://10.20.0.1/
+        - flink-cluster-webui:
+          - href: http://10.20.0.170:8081/
+        - hermes-webui:
+            - href: http://10.20.0.127:8787/
+        - Sunshine:
+            - href: https://10.20.0.226:47990/
+        - local opencodex server:
+            - href: http://localhost:10100/#dashboard
+        - unsloth macmini:
+            - href: http://unslothmac.internal
+        - unsloth 14kf:
+            - href: http://10.20.0.15:8888
+        - unsloth 14ks:
+            - href: http://10.20.0.216:8888
+        - unsloth 7950:
+            - href: http://10.20.0.125:8888
 
-    services.yaml: ""
-        # - My First Group:
-        #     - My First Service:
-        #         href: http://localhost/
-        #         description: Homepage is awesome
+  services.yaml:
+    ""
+    # - My First Group:
+    #     - My First Service:
+    #         href: http://localhost/
+    #         description: Homepage is awesome
 
-        # - My Second Group:
-        #     - My Second Service:
-        #         href: http://localhost/
-        #         description: Homepage is the best
+    # - My Second Group:
+    #     - My Second Service:
+    #         href: http://localhost/
+    #         description: Homepage is the best
 
-        # - My Third Group:
-        #     - My Third Service:
-        #         href: http://localhost/
-        #         description: Homepage is 😎
+    # - My Third Group:
+    #     - My Third Service:
+    #         href: http://localhost/
+    #         description: Homepage is 😎
 
-    widgets.yaml: |
-        - kubernetes:
-            cluster:
-              show: true
-              cpu: true
-              memory: true
-              showLabel: true
-              label: "cluster"
-            nodes:
-              show: true
-              cpu: true
-              memory: true
-              showLabel: true
-        - resources:
-            backend: resources
-            expanded: true
-            cpu: true
-            memory: true
-            network: default
-        - search:
-            provider: duckduckgo
-            target: _blank
-    docker.yaml: ""
+  widgets.yaml: |
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "cluster"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+    - resources:
+        backend: resources
+        expanded: true
+        cpu: true
+        memory: true
+        network: default
+    - search:
+        provider: duckduckgo
+        target: _blank
+  docker.yaml: ""
