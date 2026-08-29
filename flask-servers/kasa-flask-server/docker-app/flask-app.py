@@ -195,7 +195,7 @@ async def turn_off_radiator_KP125M(ip_list: list[str]) -> bool:
             async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
                 if should_manage_radiator(dev) and dev.is_on:
                     await dev.turn_off()
-                    await send_discord_message(f"Radiator {dev.alias} turned off")
+                    await send_discord_message("Radiator turned off")
         except Exception as e:
             log_device_error(ip, e)
             return False
