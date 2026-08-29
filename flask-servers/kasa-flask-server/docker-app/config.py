@@ -48,6 +48,8 @@ class Config:
             return cls.KASA_TPAP_KP125M_DEVICE_CONNECT_PARAM
         return cls.KASA_KP125M_DEVICE_CONNECT_PARAM
 
+    RADIATORS = ["radiator"]
+
     HS300_DEVICE_NAME_LIST = ["13k", "14kf", "9950x", "7950x", "14ks", "intel"]
     MONITORS = [
         "odyssey-g9-57",

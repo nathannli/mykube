@@ -54,6 +54,11 @@ def should_manage_plug(plug: Any) -> bool:
     return plug.alias is not None and plug.alias in CONFIG.DESKTOPS
 
 
+def should_manage_radiator(plug: Any) -> bool:
+    """Check if plug is a radiator to be managed."""
+    return plug.alias is not None and plug.alias in CONFIG.RADIATORS
+
+
 def log_device_error(ip: str, error: Exception, context: str = "Got Nothing"):
     """Log device-related errors with consistent formatting."""
     LOGGER.error(f"IP: {ip} ------------ {context}: error: {error}")
@@ -184,6 +189,19 @@ async def check_all_desktop_plugs_are_off_KP125M(ip_list: list[str]) -> bool:
     return True
 
 
+async def turn_off_radiator_KP125M(ip_list: list[str]) -> bool:
+    for ip in ip_list:
+        try:
+            async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
+                if should_manage_radiator(dev) and dev.is_on:
+                    await dev.turn_off()
+                    await send_discord_message(f"Radiator {dev.alias} turned off")
+        except Exception as e:
+            log_device_error(ip, e)
+            return False
+    return True
+
+
 async def turn_off_desktop_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
     for ip in ip_list:
         try:
@@ -268,6 +286,15 @@ async def trigger_power_off_desktops_async():
     """Execute power off sequence for all devices."""
     await turn_off_desktop_plugs_if_no_power_HS300(CONFIG.HS300_IP)
     await turn_off_desktop_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS)
+
+    desktops_off = (
+        await check_all_desktop_plugs_are_off_HS300()
+        and await check_all_desktop_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
+    )
+    if desktops_off:
+        await turn_off_radiator_KP125M(CONFIG.KP125M_IPS)
+    else:
+        LOGGER.warning("Desktops still on — radiator left on")
 
 
 @app.route("/poweroff", methods=["POST"])
