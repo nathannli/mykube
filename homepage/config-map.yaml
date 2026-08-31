@@ -58,7 +58,7 @@ data:
         - hermes-webui:
             - href: http://10.20.0.127:8787/
         - Sunshine:
-            - href: https://10.20.0.226:47990/
+            - href: https://10.20.0.16:47990/
         - local opencodex server:
             - href: http://localhost:10100/#dashboard
         - unsloth macmini:
