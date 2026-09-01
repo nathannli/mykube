@@ -52,7 +52,7 @@ data:
         - xiaomi-router:
             - href: http://10.20.0.140/
         - tplink routers:
-            - href: http://10.20.0.1/
+            - href: http://tplink.internal/
         - flink-cluster-webui:
           - href: http://10.20.0.170:8081/
         - hermes-webui:
