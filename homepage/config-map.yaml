@@ -64,9 +64,9 @@ data:
         - unsloth macmini:
             - href: http://unslothmac.internal
         - unsloth 14kf:
-            - href: http://10.20.0.16:8888
+            - href: http://10.20.0.15:8888
         - unsloth 14ks:
-            - href: http://10.20.0.217:8888
+            - href: http://10.20.0.216:8888
         - unsloth 7950:
             - href: http://10.20.0.125:8888
 
