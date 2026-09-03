@@ -60,7 +60,7 @@ data:
         - Sunshine:
             - href: https://10.20.0.16:47990/
         - local opencodex server:
-            - href: http://localhost:10100/#dashboard
+            - href: https://nathanmacmini.tail5666ac.ts.net:8443/
         - unsloth macmini:
             - href: http://unslothmac.internal
         - unsloth 14kf:
