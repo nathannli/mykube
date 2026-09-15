@@ -58,7 +58,7 @@ data:
         - hermes-webui:
             - href: http://10.20.0.127:8787/
         - Sunshine:
-            - href: https://10.20.0.16:47990/
+            - href: https://10.20.0.19:47990/
         - opencodex:
             - href: https://nathanmacmini.tail5666ac.ts.net:8443/
         - unsloth macmini:
