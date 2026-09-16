@@ -14,3 +14,5 @@ homeassistant/config
 **.pem
 **beszel_data**
 transmission/config/
+.zvec-grep/
+.pi/
