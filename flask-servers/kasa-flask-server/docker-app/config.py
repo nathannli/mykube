@@ -33,6 +33,15 @@ class Config:
         https=False,
         http_port=80,
     )
+    # The HS300 firmware update moved it off the legacy port 9999 protocol to
+    # KLAP with login_version 2 (sha256 handshake hashes) on port 80.
+    KASA_HS300_DEVICE_CONNECT_PARAM = DeviceConnectionParameters(
+        device_family=DeviceFamily.IotSmartPlugSwitch,
+        encryption_type=DeviceEncryptionType.Klap,
+        login_version=2,
+        https=False,
+        http_port=80,
+    )
     TPAP_KP125M_IPS = []
     KASA_TPAP_KP125M_DEVICE_CONNECT_PARAM = DeviceConnectionParameters(
         device_family=DeviceFamily.SmartKasaPlug,

@@ -614,7 +614,7 @@ requires-dist = [
     { name = "anyio" },
     { name = "flask" },
     { name = "prometheus-client" },
-    { name = "python-kasa", url = "https://github.com/nathannli/python-kasa/archive/38a48ebeb25418b027b25251128c965d5f394063.zip" },
+    { name = "python-kasa", url = "https://github.com/nathannli/python-kasa/archive/781a568753c14369b5b03cffd0368bd0e0f59b13.zip" },
     { name = "pytz" },
     { name = "requests" },
     { name = "tzdata" },
@@ -998,7 +998,7 @@ wheels = [
 [[package]]
 name = "python-kasa"
 version = "0.10.2"
-source = { url = "https://github.com/nathannli/python-kasa/archive/38a48ebeb25418b027b25251128c965d5f394063.zip" }
+source = { url = "https://github.com/nathannli/python-kasa/archive/781a568753c14369b5b03cffd0368bd0e0f59b13.zip" }
 dependencies = [
     { name = "aiohttp" },
     { name = "asyncclick" },
@@ -1008,7 +1008,7 @@ dependencies = [
     { name = "passlib" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { hash = "sha256:2a342df46ffceb8c2ce9af92162e554e088614db049966539cbfa45f2a901484" }
+sdist = { hash = "sha256:68a0aa289fcdca6a82cee7bba32a81d9c58c39cea097d973eb88cf6371c06cdd" }
 
 [package.metadata]
 requires-dist = [

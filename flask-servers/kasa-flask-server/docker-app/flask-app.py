@@ -107,7 +107,14 @@ async def connect_to_hs300_device(
     ip: str, timeout: int = 10, max_retries: int = 3
 ) -> Device:
     """Connect to an HS300 device, retrying on timeout."""
-    device_config = DeviceConfig(host=ip, timeout=timeout)
+    device_config = DeviceConfig(
+        host=ip,
+        credentials=Credentials(
+            username=CONFIG.KASA_USERNAME, password=CONFIG.KASA_PASSWORD
+        ),
+        connection_type=CONFIG.KASA_HS300_DEVICE_CONNECT_PARAM,
+        timeout=timeout,
+    )
     return await connect_to_device(device_config, ip, max_retries)
 
 
