@@ -32,6 +32,8 @@ data:
             - href: http://10.20.0.167:31090/
         - Grafana:
             - href: https://mygrafana.internal/
+        - zai-clock:
+            - href: https://myclock.internal/
         - headlamp:
             - href: http://10.20.0.167:30808/
               description: "generate token: kubectl create token headlamp-admin -n headlamp"
