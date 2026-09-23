@@ -75,6 +75,14 @@
       backdrop-filter: blur(22px);
     }
 
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+    }
+
     .brand {
       display: flex;
       align-items: center;
@@ -560,6 +568,7 @@
 
     @media (max-width: 820px) {
       .topbar { flex-wrap: wrap; }
+      .topbar-right { width: 100%; justify-content: flex-end; }
     }
 
     @media (max-width: 560px) {
@@ -584,7 +593,10 @@
           <p id="brandSubtitle">Z.ai Coding Plan quota hours in your local time</p>
         </div>
       </div>
-      <div class="chip"><span class="pulse"></span><span id="topStatus">Checking current window…</span></div>
+      <div class="topbar-right">
+        <div class="seg-toggle" id="clockToggle" role="group" aria-label="Clock" hidden></div>
+        <div class="chip"><span class="pulse"></span><span id="topStatus">Checking current window…</span></div>
+      </div>
     </header>
 
     <main class="grid">
@@ -646,53 +658,113 @@
 
   <script type="application/json" id="clockConfig">
   {
-    "schemaVersion": 1,
-    "timeZone": "Asia/Shanghai",
-    "title": "GLM-5.3-Flash off-peak clock",
-    "subtitle": "Z.ai Coding Plan quota hours in your local time",
-    "offDayName": "Weekend",
-    "holidays": {
-      "assignTo": "offPeak",
-      "name": "Public holiday",
-      "dates": []
-    },
-    "periods": [
+    "defaultClock": "zai-glm53-flash",
+    "clocks": [
       {
-        "key": "campaign",
-        "name": "Campaign hours",
-        "status": "GLM-5.3-Flash campaign hours are active now",
-        "badge": "Campaign",
-        "detail": "ZCode: no quota used · other agents: half rate",
-        "tone": "special",
-        "color": "#22d3ee",
-        "color2": "#8bf5dc",
-        "startDate": "2026-09-03",
-        "endDate": "2026-09-20",
-        "days": [0, 1, 2, 3, 4, 5, 6],
-        "windows": [{ "start": "23:00", "end": "09:00" }]
+        "slug": "zai-glm53-flash",
+        "tab": "GLM Flash",
+        "schemaVersion": 1,
+        "timeZone": "Asia/Shanghai",
+        "title": "GLM-5.3-Flash off-peak clock",
+        "subtitle": "Z.ai Coding Plan quota hours in your local time",
+        "offDayName": "Weekend",
+        "holidays": {
+          "assignTo": "offPeak",
+          "name": "Public holiday",
+          "dates": []
+        },
+        "periods": [
+          {
+            "key": "campaign",
+            "name": "Campaign hours",
+            "status": "GLM-5.3-Flash campaign hours are active now",
+            "badge": "Campaign",
+            "detail": "ZCode: unlimited usage · other agents: double quota",
+            "tone": "special",
+            "color": "#22d3ee",
+            "color2": "#8bf5dc",
+            "startDate": "2026-09-03",
+            "endDate": "2026-10-07",
+            "days": [0, 1, 2, 3, 4, 5, 6],
+            "windows": [{ "start": "23:00", "end": "09:00" }]
+          },
+          {
+            "key": "peak",
+            "name": "Peak hours",
+            "status": "Peak hours: usage counts at the standard rate",
+            "badge": "1×",
+            "detail": "Counts at the standard rate",
+            "tone": "normal",
+            "color": "#ff6b4a",
+            "color2": "#ffd166",
+            "days": [1, 2, 3, 4, 5],
+            "windows": [{ "start": "14:00", "end": "18:00" }]
+          },
+          {
+            "key": "offPeak",
+            "name": "Off-peak hours",
+            "status": "Off-peak now: usage counts at half rate",
+            "badge": "0.5×",
+            "detail": "Counts at half rate",
+            "tone": "muted",
+            "color": "#1fd37f",
+            "color2": "#0fbf6b",
+            "fallback": true
+          }
+        ]
       },
       {
-        "key": "peak",
-        "name": "Peak hours",
-        "status": "Peak hours: usage counts at the standard rate",
-        "badge": "1×",
-        "detail": "Counts at the standard rate",
-        "tone": "normal",
-        "color": "#ff6b4a",
-        "color2": "#ffd166",
-        "days": [1, 2, 3, 4, 5],
-        "windows": [{ "start": "14:00", "end": "18:00" }]
-      },
-      {
-        "key": "offPeak",
-        "name": "Off-peak hours",
-        "status": "Off-peak now: usage counts at half rate",
-        "badge": "0.5×",
-        "detail": "Counts at half rate",
-        "tone": "muted",
-        "color": "#1fd37f",
-        "color2": "#0fbf6b",
-        "fallback": true
+        "slug": "deepseek",
+        "tab": "DeepSeek",
+        "schemaVersion": 1,
+        "timeZone": "UTC",
+        "title": "DeepSeek Flash / Pro pricing clock",
+        "subtitle": "DeepSeek API pricing hours in your local time",
+        "offDayName": "Weekend",
+        "holidays": {
+          "assignTo": "offPeak",
+          "name": "Chinese public holiday",
+          "timeZone": "Asia/Shanghai",
+          "dates": [
+            "2026-01-01", "2026-01-02", "2026-01-03",
+            "2026-02-15", "2026-02-16", "2026-02-17", "2026-02-18", "2026-02-19",
+            "2026-02-20", "2026-02-21", "2026-02-22", "2026-02-23",
+            "2026-04-04", "2026-04-05", "2026-04-06",
+            "2026-05-01", "2026-05-02", "2026-05-03", "2026-05-04", "2026-05-05",
+            "2026-06-19", "2026-06-20", "2026-06-21",
+            "2026-09-25", "2026-09-26", "2026-09-27",
+            "2026-10-01", "2026-10-02", "2026-10-03", "2026-10-04",
+            "2026-10-05", "2026-10-06", "2026-10-07"
+          ]
+        },
+        "periods": [
+          {
+            "key": "peak",
+            "name": "Peak rate",
+            "status": "Peak rate is active now",
+            "badge": "2×",
+            "detail": "2× the off-peak rate",
+            "tone": "normal",
+            "color": "#ff6b4a",
+            "color2": "#ffd166",
+            "days": [1, 2, 3, 4, 5],
+            "windows": [
+              { "start": "01:00", "end": "04:00" },
+              { "start": "06:00", "end": "10:00" }
+            ]
+          },
+          {
+            "key": "offPeak",
+            "name": "Off-peak rate",
+            "status": "Off-peak rate is active now",
+            "badge": "1×",
+            "detail": "Base rate",
+            "tone": "muted",
+            "color": "#1fd37f",
+            "color2": "#0fbf6b",
+            "fallback": true
+          }
+        ]
       }
     ]
   }
@@ -741,7 +813,8 @@
       track: document.getElementById('track'),
       windows: document.getElementById('windows'),
       clockLegend: document.getElementById('clockLegend'),
-      hourToggle: document.getElementById('hourToggle')
+      hourToggle: document.getElementById('hourToggle'),
+      clockToggle: document.getElementById('clockToggle')
     };
 
     const fmtTime = new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit' });
@@ -766,6 +839,10 @@
     let schedulingPeriods = null;
     let fallbackPeriod = null;
     let arcLayerOrder = null;
+    let clockCatalog = [];
+    let clockBySlug = new Map();
+    let activeSlug = null;
+    const CLOCK_STORAGE_KEY = 'zaiClock.clock';
 
     function hexToRgba(hex, alpha) {
       const value = hex.replace('#', '');
@@ -863,6 +940,13 @@
       const holidays = raw.holidays;
       if (holidays !== undefined) {
         if (!holidays || typeof holidays !== 'object') errors.push('holidays must be an object');
+        if (holidays?.timeZone !== undefined) {
+          try {
+            new Intl.DateTimeFormat('en-US', { timeZone: holidays.timeZone });
+          } catch (e) {
+            errors.push(`holidays.timeZone "${holidays.timeZone}" is not a valid IANA zone`);
+          }
+        }
         if ((holidays?.dates?.length || 0) > 0) {
           if (!keys.includes(holidays.assignTo)) errors.push('holidays.assignTo must name an existing period');
           for (const date of holidays.dates) {
@@ -871,6 +955,28 @@
         }
       }
 
+      return errors;
+    }
+
+    // Catalog = wrapper object holding one or more clocks the toggle switches
+    // between. Each clock validates with the same rules as before.
+    function validateCatalog(raw) {
+      if (!raw || typeof raw !== 'object' || !Array.isArray(raw.clocks) || raw.clocks.length === 0) {
+        return ['clockConfig must be an object with a non-empty "clocks" array'];
+      }
+      const errors = [];
+      const slugs = raw.clocks.map(clock => clock.slug);
+      if (slugs.some(slug => typeof slug !== 'string' || !slug)) errors.push('every clock needs a string slug');
+      if (new Set(slugs).size !== slugs.length) errors.push('clock slugs must be unique');
+      for (const clock of raw.clocks) {
+        if (typeof clock.tab !== 'string' || !clock.tab) errors.push(`${clock.slug || 'unknown'}: tab label is required`);
+        for (const message of validateConfig(clock)) {
+          errors.push(`${clock.slug || 'unknown'}: ${message}`);
+        }
+      }
+      if (raw.defaultClock !== undefined && !slugs.includes(raw.defaultClock)) {
+        errors.push(`defaultClock "${raw.defaultClock}" does not name a clock`);
+      }
       return errors;
     }
 
@@ -983,8 +1089,12 @@
       return (clockConfig.holidays && clockConfig.holidays.dates) || [];
     }
 
+    function holidayTimeZone() {
+      return (clockConfig.holidays && clockConfig.holidays.timeZone) || clockConfig.timeZone;
+    }
+
     function isHoliday(date) {
-      const parts = scheduleParts(date);
+      const parts = zonedParts(date, holidayTimeZone());
       const key = `${parts.year}-${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}`;
       return holidayDates().includes(key);
     }
@@ -1805,7 +1915,103 @@
       el.brandTitle.textContent = clockConfig.title;
       el.brandSubtitle.textContent = clockConfig.subtitle;
       el.clockTitle.textContent = clockConfig.title;
+      for (const btn of el.clockToggle.querySelectorAll('.seg-btn')) {
+        const active = btn.dataset.clock === activeSlug;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      }
     }
+
+    function buildClockToggle() {
+      el.clockToggle.replaceChildren();
+      for (const clock of clockCatalog) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'seg-btn';
+        btn.dataset.clock = clock.slug;
+        btn.textContent = clock.tab;
+        btn.setAttribute('aria-pressed', 'false');
+        btn.addEventListener('click', () => {
+          if (btn.dataset.clock !== activeSlug) selectClock(btn.dataset.clock);
+        });
+        el.clockToggle.appendChild(btn);
+      }
+      el.clockToggle.hidden = clockCatalog.length < 2;
+    }
+
+    function slugFromHash() {
+      const params = new URLSearchParams(window.location.hash.slice(1));
+      return params.get('clock') || params.get('provider');
+    }
+
+    function syncClockHash(slug) {
+      const params = new URLSearchParams(window.location.hash.slice(1));
+      params.set('clock', slug);
+      window.history.replaceState(null, '', `#${params.toString()}`);
+    }
+
+    function loadStoredClock() {
+      try {
+        return localStorage.getItem(CLOCK_STORAGE_KEY);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function saveStoredClock(slug) {
+      try {
+        localStorage.setItem(CLOCK_STORAGE_KEY, slug);
+      } catch (e) {
+        /* Storage unavailable; ignore. */
+      }
+    }
+
+    function selectClock(slug, { updateHash = true } = {}) {
+      const clock = clockBySlug.get(slug) || clockCatalog[0];
+      activeSlug = clock.slug;
+      applyConfig(clock);
+      applyConfigUi();
+      buildGradientDefs();
+      buildArcLayerGroups();
+      dialHours = loadDialMode();
+      applyDialMode();
+      update();
+      if (updateHash) syncClockHash(activeSlug);
+      saveStoredClock(activeSlug);
+    }
+
+    function initialize() {
+      let raw = null;
+      try {
+        raw = JSON.parse(document.getElementById('clockConfig').textContent);
+      } catch (error) {
+        showFatalError([`clockConfig block is not valid JSON: ${error.message}`]);
+        return;
+      }
+
+      const errors = validateCatalog(raw);
+      if (errors.length) {
+        showFatalError(errors);
+        return;
+      }
+
+      clockCatalog = raw.clocks;
+      clockBySlug = new Map(clockCatalog.map(clock => [clock.slug, clock]));
+      buildClockToggle();
+
+      const requested = slugFromHash() || loadStoredClock() ||
+        raw.defaultClock || clockCatalog[0].slug;
+      selectClock(requested);
+      setInterval(update, 1000);
+    }
+
+    window.addEventListener('hashchange', () => {
+      const slug = slugFromHash();
+      if (!slug || slug === activeSlug || !clockBySlug.has(slug)) return;
+      selectClock(slug, { updateHash: false });
+    });
+
+    initialize();
 
     function showFatalError(errors) {
       document.title = 'Clock config error';
@@ -1825,34 +2031,6 @@
       card.append(heading, intro, list);
       el.app.appendChild(card);
     }
-
-    function initialize() {
-      let raw = null;
-      try {
-        raw = JSON.parse(document.getElementById('clockConfig').textContent);
-      } catch (error) {
-        showFatalError([`clockConfig block is not valid JSON: ${error.message}`]);
-        return;
-      }
-
-      const errors = validateConfig(raw);
-      if (errors.length) {
-        showFatalError(errors);
-        return;
-      }
-
-      applyConfig(raw);
-      applyConfigUi();
-      buildGradientDefs();
-      buildArcLayerGroups();
-
-      dialHours = loadDialMode();
-      applyDialMode();
-      update();
-      setInterval(update, 1000);
-    }
-
-    initialize();
   </script>
 </body>
 </html>
