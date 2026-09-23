@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zai-clock
+  namespace: zai-clock
+  labels:
+    app.kubernetes.io/name: zai-clock
+spec:
+  tls:
+  - hosts:
+    - myclock.internal
+    secretName: zai-clock-tls
+  rules:
+  - host: myclock.internal
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: zai-clock
+            port:
+              number: 80
