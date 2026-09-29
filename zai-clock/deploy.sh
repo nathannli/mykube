@@ -32,5 +32,5 @@ kubectl apply -f deployment.yaml -f service.yaml -f ingress.yaml
 
 # A configmap update leaves the pod template unchanged, so Kubernetes keeps the
 # running pod and nginx serves the old index.html. Restart to publish it.
-kubectl rollout restart deployment/zai-clock
-kubectl rollout status deployment/zai-clock --timeout=120s
+kubectl rollout restart deployment/zai-clock -n zai-clock
+kubectl rollout status deployment/zai-clock -n zai-clock --timeout=120s
