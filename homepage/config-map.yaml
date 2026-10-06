@@ -24,8 +24,6 @@ data:
     - Shortcuts:
         - Homepage:
             - href: https://myhomepage.internal/
-        - OpenWebUI:
-            - href: https://myopenwebui.internal/
         - Home Assistant:
             - href: http://10.20.0.167:8123/
         - Prometheus:
@@ -63,8 +61,6 @@ data:
             - href: https://10.20.0.19:47990/
         - opencodex:
             - href: https://nathanmacmini.tail5666ac.ts.net:8443/
-        - unsloth macmini:
-            - href: http://unslothmac.internal
         - unsloth 14kf:
             - href: http://10.20.0.19:8888
         - unsloth 14ks:
