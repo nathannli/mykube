@@ -1,6 +1,6 @@
 #!/bin/bash
 OUT=/var/lib/node_exporter/textfile_collector/highflow.prom
-DATA=$(sensors -j 2>/dev/null | jq '.["highflownext-hid-3-1"]')
+DATA=$(sensors -j 2>/dev/null | jq '.["highflownext-hid-3-3"]')
 
 if [ -z "$DATA" ] || [ "$DATA" = "null" ]; then
   echo "[$(date)] ERROR: Failed to retrieve sensor data"
