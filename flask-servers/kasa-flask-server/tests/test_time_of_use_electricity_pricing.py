@@ -71,27 +71,27 @@ class TestPricingStructure:
     def test_winter_weekday_pricing(self):
         """Test specific winter weekday pricing values."""
         pricing = TimeOfUseElectricityPricing.pricing[WINTER][WEEKDAY]
-        # 0-6: 0.098
+        # 0-6: 0.091
         for h in range(0, 7):
-            assert pricing[h] == 0.098
-        # 7-10: 0.203
+            assert pricing[h] == 0.091
+        # 7-10: 0.189
         for h in range(7, 11):
-            assert pricing[h] == 0.203
-        # 11-16: 0.157
+            assert pricing[h] == 0.189
+        # 11-16: 0.146
         for h in range(11, 17):
-            assert pricing[h] == 0.157
-        # 17-18: 0.203
+            assert pricing[h] == 0.146
+        # 17-18: 0.189
         for h in range(17, 19):
-            assert pricing[h] == 0.203
-        # 19-23: 0.098
+            assert pricing[h] == 0.189
+        # 19-23: 0.091
         for h in range(19, 24):
-            assert pricing[h] == 0.098
+            assert pricing[h] == 0.091
 
     def test_winter_weekend_pricing(self):
         """Test that winter weekends have flat rate."""
         pricing = TimeOfUseElectricityPricing.pricing[WINTER][WEEKEND]
         for h in range(24):
-            assert pricing[h] == 0.098
+            assert pricing[h] == 0.091
 
     def test_summer_weekday_pricing(self):
         """Test specific summer weekday pricing values."""
@@ -369,7 +369,7 @@ class TestGetCurrentPrice:
         mock_datetime.now.return_value = mock_now
         mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
         pricing = TimeOfUseElectricityPricing()
-        assert pricing.get_current_price() == 0.098
+        assert pricing.get_current_price() == 0.091
 
     @patch('time_of_use_electricity_pricing.datetime')
     def test_winter_weekday_peak_morning(self, mock_datetime):
@@ -380,7 +380,7 @@ class TestGetCurrentPrice:
         mock_datetime.now.return_value = mock_now
         mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
         pricing = TimeOfUseElectricityPricing()
-        assert pricing.get_current_price() == 0.203
+        assert pricing.get_current_price() == 0.189
 
     @patch('time_of_use_electricity_pricing.datetime')
     def test_winter_weekday_partial_peak_afternoon(self, mock_datetime):
@@ -391,7 +391,7 @@ class TestGetCurrentPrice:
         mock_datetime.now.return_value = mock_now
         mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
         pricing = TimeOfUseElectricityPricing()
-        assert pricing.get_current_price() == 0.157
+        assert pricing.get_current_price() == 0.146
 
     @patch('time_of_use_electricity_pricing.datetime')
     def test_winter_weekday_peak_evening(self, mock_datetime):
@@ -402,7 +402,7 @@ class TestGetCurrentPrice:
         mock_datetime.now.return_value = mock_now
         mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
         pricing = TimeOfUseElectricityPricing()
-        assert pricing.get_current_price() == 0.203
+        assert pricing.get_current_price() == 0.189
 
     @patch('time_of_use_electricity_pricing.datetime')
     def test_winter_weekday_off_peak_night(self, mock_datetime):
@@ -413,7 +413,7 @@ class TestGetCurrentPrice:
         mock_datetime.now.return_value = mock_now
         mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
         pricing = TimeOfUseElectricityPricing()
-        assert pricing.get_current_price() == 0.098
+        assert pricing.get_current_price() == 0.091
 
     @patch('time_of_use_electricity_pricing.datetime')
     def test_winter_weekend_flat_rate(self, mock_datetime):
@@ -424,7 +424,7 @@ class TestGetCurrentPrice:
         mock_datetime.now.return_value = mock_now
         mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
         pricing = TimeOfUseElectricityPricing()
-        assert pricing.get_current_price() == 0.098
+        assert pricing.get_current_price() == 0.091
 
     @patch('time_of_use_electricity_pricing.datetime')
     def test_winter_weekend_flat_rate_midnight(self, mock_datetime):
@@ -435,7 +435,7 @@ class TestGetCurrentPrice:
         mock_datetime.now.return_value = mock_now
         mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
         pricing = TimeOfUseElectricityPricing()
-        assert pricing.get_current_price() == 0.098
+        assert pricing.get_current_price() == 0.091
 
     @patch('time_of_use_electricity_pricing.datetime')
     def test_summer_weekday_off_peak_morning(self, mock_datetime):
@@ -532,7 +532,7 @@ class TestGetCurrentPrice:
         # October 20 should be summer peak: 0.157 (weekday, EDT)
         assert oct_20_price == 0.157
         # November 20 should be winter weekday peak: 0.203 (weekday, EST)
-        assert nov_20_price == 0.203
+        assert nov_20_price == 0.189
         # Prices should differ between summer and winter
         assert oct_20_price != nov_20_price
 
@@ -552,8 +552,8 @@ class TestGetCurrentPrice:
         mock_datetime.now.return_value = make_toronto_datetime(2026, 5, 20, 9, 0, 0)
         may_20_price = pricing.get_current_price()
 
-        # April 20 should be winter peak: 0.203 (weekday, hour 9, EST)
-        assert apr_20_price == 0.203
+        # April 20 should be winter peak: 0.189 (weekday, hour 9, EST)
+        assert apr_20_price == 0.189
         # May 20 should be summer peak: 0.157 (weekday, hour 9, EDT)
         assert may_20_price == 0.157
         # Prices should differ between winter and summer
@@ -570,5 +570,5 @@ class TestGetCurrentPrice:
         mock_datetime.now.return_value = make_toronto_datetime(year=2025, month=12, day=22, hour=14)
         dec_22_2025_price = pricing.get_current_price()
 
-        # Hour 14 (2:00 PM) in winter weekday: partial peak (11-16) = 0.157
-        assert dec_22_2025_price == 0.157
+        # Hour 14 (2:00 PM) in winter weekday: partial peak (11-16) = 0.146
+        assert dec_22_2025_price == 0.146
