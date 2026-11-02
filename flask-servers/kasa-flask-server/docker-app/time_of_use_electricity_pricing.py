@@ -33,13 +33,13 @@ class TimeOfUseElectricityPricing:
     pricing: dict[str, dict[str, dict[int, float]]] = {
         WINTER: {
             WEEKDAY: {
-                **{h: 0.098 for h in range(0, 7)},
-                **{h: 0.203 for h in range(7, 11)},
-                **{h: 0.157 for h in range(11, 17)},
-                **{h: 0.203 for h in range(17, 19)},
-                **{h: 0.098 for h in range(19, 24)},
+                **{h: 0.091 for h in range(0, 7)},
+                **{h: 0.189 for h in range(7, 11)},
+                **{h: 0.146 for h in range(11, 17)},
+                **{h: 0.189 for h in range(17, 19)},
+                **{h: 0.091 for h in range(19, 24)},
             },
-            WEEKEND: {h: 0.098 for h in range(24)}
+            WEEKEND: {h: 0.091 for h in range(24)}
         },
         SUMMER: {
             WEEKDAY: {
