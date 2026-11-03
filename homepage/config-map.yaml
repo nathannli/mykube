@@ -48,13 +48,11 @@ data:
         - beszel-hub:
             - href: http://10.20.0.167:8090/
         - xiaomi-router:
-            - href: http://10.20.0.140/
+            - href: http://10.20.0.142/
         - tplink routers:
             - href: http://tplink.internal/
         - flink-cluster-webui:
           - href: http://10.20.0.170:8081/
-        - hermes-webui:
-            - href: http://10.20.0.127:8787/
         - Sunshine:
             - href: https://10.20.0.19:47990/
         - cliproxyapi:
