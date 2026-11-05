@@ -59,7 +59,7 @@ class Config:
 
     RADIATORS = ["radiator"]
 
-    HS300_DEVICE_NAME_LIST = ["13k", "14kf", "9950x", "7950x", "14ks", "intel"]
+    HS300_DEVICE_NAME_LIST = ["13kf", "14kf", "9950x", "7950x", "14ks", "285k"]
     MONITORS = [
         "odyssey-g9-57",
         "alienware",
@@ -68,7 +68,7 @@ class Config:
         "LG45",
         "kuycon",
     ]
-    DESKTOPS = ["13k", "14kf", "9950x", "intel", "7950x", "14ks", "5950x", "9600k"]
+    DESKTOPS = ["13kf", "14kf", "9950x", "285k", "7950x", "14ks", "5950x", "9600k"]
 
     LOW_POWER_THRESHOLD_WATTS = 7
 
