@@ -16,3 +16,4 @@ homeassistant/config
 transmission/config/
 .zvec-grep/
 .pi/
+.reposcry/
