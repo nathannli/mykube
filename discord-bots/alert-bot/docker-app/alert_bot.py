@@ -45,6 +45,19 @@ if channel_id_str == "" or bot_token == "":
 
 channel_id = int(channel_id_str)
 
+@app.route("/health", methods=["GET"])
+def health():
+    """
+    Readiness of the Discord half of the process.
+
+    The Flask half stays up even when the Discord client never logged in, so
+    this is the signal Kubernetes needs: 503 until the client is ready.
+    """
+    if client.is_ready():
+        return "OK", 200
+    return "Discord client not ready", 503
+
+
 @app.route("/alert", methods=["POST"])
 def send_alert():
     """
