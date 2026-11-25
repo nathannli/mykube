@@ -284,3 +284,44 @@ def test_poweroff_route_rejects_invalid_exclude_type():
     client = flask_app.app.test_client()
     resp = client.post("/poweroff", json={"exclude": "13kf"})
     assert resp.status_code == 400
+
+
+def test_excluded_idle_devices_are_not_turned_off():
+    """Excluded devices drawing < threshold must not be powered off on HS300 or KP125M."""
+    excluded_hs300 = _make_energy_device("13kf", is_on=True, watts=1.0)
+    idle_hs300 = _make_energy_device("14kf", is_on=True, watts=2.0)
+    hs300 = _make_hs300([excluded_hs300, idle_hs300])
+    excluded_kp = _make_energy_device("5950x", is_on=True, watts=0.5)
+    radiator = _make_energy_device("radiator", is_on=True, watts=500.0)
+    kp_by_ip = {"10.20.0.1": excluded_kp, "10.20.0.2": radiator}
+
+    async def fake_kp_connect(ip, *args, **kwargs):
+        return kp_by_ip[ip]
+
+    with patch.object(
+        flask_app.CONFIG,
+        "KP125M_IPS",
+        ["10.20.0.1", "10.20.0.2"],
+    ), patch.object(
+        flask_app,
+        "connect_to_hs300_device",
+        AsyncMock(return_value=hs300),
+    ), patch.object(
+        flask_app,
+        "connect_to_kp125m_device",
+        AsyncMock(side_effect=fake_kp_connect),
+    ), patch.object(
+        flask_app,
+        "send_discord_message",
+        AsyncMock(),
+    ):
+        asyncio.run(
+            flask_app.trigger_power_off_desktops_async(
+                excluded_devices=["13kf", "5950x"]
+            )
+        )
+
+    excluded_hs300.turn_off.assert_not_awaited()
+    excluded_kp.turn_off.assert_not_awaited()
+    idle_hs300.turn_off.assert_awaited_once()
+    radiator.turn_off.assert_awaited_once()

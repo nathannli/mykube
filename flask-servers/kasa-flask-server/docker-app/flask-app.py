@@ -157,6 +157,11 @@ async def turn_off_desktop_plugs_if_no_power_HS300(
         async with managed_device_connection(connect_to_hs300_device, ip) as dev:
             for plug in dev.children:
                 if should_manage_plug(plug):
+                    if plug.alias in excluded:
+                        LOGGER.info(
+                            f"Skipping poweroff for excluded plug {plug.alias}"
+                        )
+                        continue
                     if plug.is_on:
                         plug_energy = plug.modules[Module.Energy]
                         if (
@@ -165,10 +170,6 @@ async def turn_off_desktop_plugs_if_no_power_HS300(
                         ):
                             await plug.turn_off()
                             await send_discord_message(f"Plug {plug.alias} turned off")
-                        elif plug.alias in excluded:
-                            LOGGER.info(
-                                f"Plug {plug.alias} is still on but excluded from poweroff check"
-                            )
                         else:
                             LOGGER.warning(f"Plug {plug.alias} is still on")
                             return False
@@ -256,21 +257,23 @@ async def turn_off_desktop_plugs_if_no_power_KP125M(
     for ip in ip_list:
         try:
             async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
-                if should_manage_plug(dev) and dev.is_on:
-                    device_energy = dev.modules[Module.Energy]
-                    if (
-                        device_energy.current_consumption
-                        < CONFIG.LOW_POWER_THRESHOLD_WATTS
-                    ):
-                        await dev.turn_off()
-                        await send_discord_message(f"Plug {dev.alias} turned off")
-                    elif dev.alias in excluded:
+                if should_manage_plug(dev):
+                    if dev.alias in excluded:
                         LOGGER.info(
-                            f"Plug {dev.alias} is still on but excluded from poweroff check"
+                            f"Skipping poweroff for excluded plug {dev.alias}"
                         )
-                    else:
-                        LOGGER.warning(f"Plug {dev.alias} is still on")
-                        return False
+                        continue
+                    if dev.is_on:
+                        device_energy = dev.modules[Module.Energy]
+                        if (
+                            device_energy.current_consumption
+                            < CONFIG.LOW_POWER_THRESHOLD_WATTS
+                        ):
+                            await dev.turn_off()
+                            await send_discord_message(f"Plug {dev.alias} turned off")
+                        else:
+                            LOGGER.warning(f"Plug {dev.alias} is still on")
+                            return False
         except Exception as e:
             log_device_error(ip, e)
             return False
