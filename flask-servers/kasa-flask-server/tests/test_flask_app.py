@@ -13,6 +13,13 @@ os.environ.setdefault("HS300_IP", "10.20.0.40")
 os.environ.setdefault("KP125M_IPS", "10.20.0.1")
 os.environ.setdefault("KASA_USERNAME", "test")
 os.environ.setdefault("KASA_PASSWORD", "test")
+os.environ.setdefault("RADIATORS", "- radiator")
+os.environ.setdefault("HS300_DEVICE_NAME_LIST", "- 13kf\n- 14kf\n- 9950x\n- 7950x\n- 14ks\n- 285k")
+os.environ.setdefault("MONITORS", "- LG45\n- kuycon")
+os.environ.setdefault("DESKTOPS", "- 13kf\n- 14kf\n- 9950x\n- 285k\n- 7950x\n- 14ks\n- 5950x\n- 9600k")
+os.environ.setdefault("RADIATOR_POWEROFF_EXCLUDED_DEVICES", "")
+os.environ.setdefault("LOW_POWER_THRESHOLD_WATTS", "7")
+os.environ.setdefault("DISCORD_ALERT_BOT_URL", "http://localhost:5000/alert")
 
 spec = importlib.util.spec_from_file_location("kasa_flask_app", APP_PATH)
 flask_app = importlib.util.module_from_spec(spec)
@@ -325,3 +332,28 @@ def test_excluded_idle_devices_are_not_turned_off():
     excluded_kp.turn_off.assert_not_awaited()
     idle_hs300.turn_off.assert_awaited_once()
     radiator.turn_off.assert_awaited_once()
+
+
+def test_require_list_env_parses_and_fails_when_missing(monkeypatch):
+    """require_list_env raises when unset, returns [] for empty, parses YAML bullets and CSV."""
+    import pytest
+    from config import require_list_env
+
+    monkeypatch.delenv("RADIATOR_POWEROFF_EXCLUDED_DEVICES", raising=False)
+    with pytest.raises(RuntimeError, match="RADIATOR_POWEROFF_EXCLUDED_DEVICES"):
+        require_list_env("RADIATOR_POWEROFF_EXCLUDED_DEVICES")
+
+    monkeypatch.setenv("RADIATOR_POWEROFF_EXCLUDED_DEVICES", "")
+    assert require_list_env("RADIATOR_POWEROFF_EXCLUDED_DEVICES") == []
+
+    monkeypatch.setenv(
+        "RADIATOR_POWEROFF_EXCLUDED_DEVICES",
+        "  - 5950x\n  - odyssey-g9-57\n\n",
+    )
+    assert require_list_env("RADIATOR_POWEROFF_EXCLUDED_DEVICES") == [
+        "5950x",
+        "odyssey-g9-57",
+    ]
+
+    monkeypatch.setenv("RADIATOR_POWEROFF_EXCLUDED_DEVICES", "5950x, 14ks")
+    assert require_list_env("RADIATOR_POWEROFF_EXCLUDED_DEVICES") == ["5950x", "14ks"]

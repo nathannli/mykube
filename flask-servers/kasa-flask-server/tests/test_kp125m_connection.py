@@ -14,6 +14,13 @@ os.environ.setdefault("HS300_IP", "10.20.0.40")
 os.environ.setdefault("KP125M_IPS", "10.20.0.115")
 os.environ.setdefault("KASA_USERNAME", "test-user")
 os.environ.setdefault("KASA_PASSWORD", "test-password")
+os.environ.setdefault("RADIATORS", "- radiator")
+os.environ.setdefault("HS300_DEVICE_NAME_LIST", "- 13kf")
+os.environ.setdefault("MONITORS", "- LG45")
+os.environ.setdefault("DESKTOPS", "- 13kf")
+os.environ.setdefault("RADIATOR_POWEROFF_EXCLUDED_DEVICES", "")
+os.environ.setdefault("LOW_POWER_THRESHOLD_WATTS", "7")
+os.environ.setdefault("DISCORD_ALERT_BOT_URL", "http://localhost:5000/alert")
 
 from config import Config
 

@@ -4,6 +4,7 @@ metadata:
   name: kasa-config
   namespace: kasa-flask-server
 data:
+  # Device IPs
   HS300_IP: "10.20.0.40"
   KP125M_IPS: |
     - 10.20.0.116
@@ -15,3 +16,38 @@ data:
     - 10.20.0.115
     - 10.20.0.56
     - 10.20.0.47
+
+  # Poweroff policy
+  DESKTOPS: |
+    - 13kf
+    - 14kf
+    - 9950x
+    - 285k
+    - 7950x
+    - 14ks
+    - 5950x
+    - 9600k
+  RADIATORS: |
+    - radiator
+  RADIATOR_POWEROFF_EXCLUDED_DEVICES: |
+    - 5950x
+  LOW_POWER_THRESHOLD_WATTS: "7"
+
+  # Other device groups
+  HS300_DEVICE_NAME_LIST: |
+    - 13kf
+    - 14kf
+    - 9950x
+    - 7950x
+    - 14ks
+    - 285k
+  MONITORS: |
+    - odyssey-g9-57
+    - alienware
+    - LGDualUp
+    - odyssey-g9-49
+    - LG45
+    - kuycon
+
+  # Alerts
+  DISCORD_ALERT_BOT_URL: "http://discord-general-channel-alert-bot-node-port.discord-bots.svc.cluster.local:5000/alert"
