@@ -69,6 +69,7 @@ class Config:
         "kuycon",
     ]
     DESKTOPS = ["13kf", "14kf", "9950x", "285k", "7950x", "14ks", "5950x", "9600k"]
+    RADIATOR_POWEROFF_EXCLUDED_DEVICES: list[str] = ["5950x"]
 
     LOW_POWER_THRESHOLD_WATTS = 7
 

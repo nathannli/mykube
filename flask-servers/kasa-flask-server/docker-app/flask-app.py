@@ -145,7 +145,14 @@ async def get_metrics_HS300(ip: str) -> dict[Any, Any]:
         raise e
 
 
-async def turn_off_desktop_plugs_if_no_power_HS300(ip: str) -> bool:
+async def turn_off_desktop_plugs_if_no_power_HS300(
+    ip: str, excluded_devices: list[str] | set[str] | None = None
+) -> bool:
+    excluded = set(
+        CONFIG.RADIATOR_POWEROFF_EXCLUDED_DEVICES
+        if excluded_devices is None
+        else excluded_devices
+    )
     try:
         async with managed_device_connection(connect_to_hs300_device, ip) as dev:
             for plug in dev.children:
@@ -158,6 +165,10 @@ async def turn_off_desktop_plugs_if_no_power_HS300(ip: str) -> bool:
                         ):
                             await plug.turn_off()
                             await send_discord_message(f"Plug {plug.alias} turned off")
+                        elif plug.alias in excluded:
+                            LOGGER.info(
+                                f"Plug {plug.alias} is still on but excluded from poweroff check"
+                            )
                         else:
                             LOGGER.warning(f"Plug {plug.alias} is still on")
                             return False
@@ -167,13 +178,25 @@ async def turn_off_desktop_plugs_if_no_power_HS300(ip: str) -> bool:
         return False
 
 
-async def check_all_desktop_plugs_are_off_HS300() -> bool:
+async def check_all_desktop_plugs_are_off_HS300(
+    excluded_devices: list[str] | set[str] | None = None,
+) -> bool:
+    excluded = set(
+        CONFIG.RADIATOR_POWEROFF_EXCLUDED_DEVICES
+        if excluded_devices is None
+        else excluded_devices
+    )
     try:
         async with managed_device_connection(
             connect_to_hs300_device, CONFIG.HS300_IP
         ) as dev:
             for plug in dev.children:
                 if should_manage_plug(plug):
+                    if plug.alias in excluded:
+                        LOGGER.info(
+                            f"Skipping poweroff check for excluded plug {plug.alias}"
+                        )
+                        continue
                     if plug.is_on:
                         LOGGER.warning(f"Plug {plug.alias} is still on")
                         return False
@@ -183,13 +206,26 @@ async def check_all_desktop_plugs_are_off_HS300() -> bool:
         return False
 
 
-async def check_all_desktop_plugs_are_off_KP125M(ip_list: list[str]) -> bool:
+async def check_all_desktop_plugs_are_off_KP125M(
+    ip_list: list[str], excluded_devices: list[str] | set[str] | None = None
+) -> bool:
+    excluded = set(
+        CONFIG.RADIATOR_POWEROFF_EXCLUDED_DEVICES
+        if excluded_devices is None
+        else excluded_devices
+    )
     for ip in ip_list:
         try:
             async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
-                if should_manage_plug(dev) and dev.is_on:
-                    LOGGER.error(f"Plug {dev.alias} is still on")
-                    return False
+                if should_manage_plug(dev):
+                    if dev.alias in excluded:
+                        LOGGER.info(
+                            f"Skipping poweroff check for excluded plug {dev.alias}"
+                        )
+                        continue
+                    if dev.is_on:
+                        LOGGER.error(f"Plug {dev.alias} is still on")
+                        return False
         except Exception as e:
             log_device_error(ip, e)
             return False
@@ -209,7 +245,14 @@ async def turn_off_radiator_KP125M(ip_list: list[str]) -> bool:
     return True
 
 
-async def turn_off_desktop_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
+async def turn_off_desktop_plugs_if_no_power_KP125M(
+    ip_list: list[str], excluded_devices: list[str] | set[str] | None = None
+) -> bool:
+    excluded = set(
+        CONFIG.RADIATOR_POWEROFF_EXCLUDED_DEVICES
+        if excluded_devices is None
+        else excluded_devices
+    )
     for ip in ip_list:
         try:
             async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
@@ -221,6 +264,10 @@ async def turn_off_desktop_plugs_if_no_power_KP125M(ip_list: list[str]) -> bool:
                     ):
                         await dev.turn_off()
                         await send_discord_message(f"Plug {dev.alias} turned off")
+                    elif dev.alias in excluded:
+                        LOGGER.info(
+                            f"Plug {dev.alias} is still on but excluded from poweroff check"
+                        )
                     else:
                         LOGGER.warning(f"Plug {dev.alias} is still on")
                         return False
@@ -289,14 +336,24 @@ def metrics():
     return generate_latest(registry), 200, {"Content-Type": CONTENT_TYPE_LATEST}
 
 
-async def trigger_power_off_desktops_async():
+async def trigger_power_off_desktops_async(
+    excluded_devices: list[str] | set[str] | None = None,
+):
     """Execute power off sequence for all devices."""
-    await turn_off_desktop_plugs_if_no_power_HS300(CONFIG.HS300_IP)
-    await turn_off_desktop_plugs_if_no_power_KP125M(CONFIG.KP125M_IPS)
+    await turn_off_desktop_plugs_if_no_power_HS300(
+        CONFIG.HS300_IP, excluded_devices=excluded_devices
+    )
+    await turn_off_desktop_plugs_if_no_power_KP125M(
+        CONFIG.KP125M_IPS, excluded_devices=excluded_devices
+    )
 
     desktops_off = (
-        await check_all_desktop_plugs_are_off_HS300()
-        and await check_all_desktop_plugs_are_off_KP125M(CONFIG.KP125M_IPS)
+        await check_all_desktop_plugs_are_off_HS300(
+            excluded_devices=excluded_devices
+        )
+        and await check_all_desktop_plugs_are_off_KP125M(
+            CONFIG.KP125M_IPS, excluded_devices=excluded_devices
+        )
     )
     if desktops_off:
         await turn_off_radiator_KP125M(CONFIG.KP125M_IPS)
@@ -313,7 +370,21 @@ def trigger_power_off():
             request.headers.get("X-Forwarded-For"),
             request.headers.get("User-Agent"),
         )
-        asyncio.run(trigger_power_off_desktops_async())
+        payload = request.get_json(silent=True)
+        excluded_devices = None
+        if isinstance(payload, dict) and "exclude" in payload:
+            raw_exclude = payload["exclude"]
+            if not isinstance(raw_exclude, list) or not all(
+                isinstance(d, str) for d in raw_exclude
+            ):
+                return jsonify(
+                    {
+                        "status": "failure",
+                        "message": "exclude must be a list of device names",
+                    }
+                ), 400
+            excluded_devices = raw_exclude
+        asyncio.run(trigger_power_off_desktops_async(excluded_devices=excluded_devices))
         return jsonify({"status": "success", "message": "poweroff success"}), 200
     except Exception as e:
         LOGGER.exception(f"power off error: {e}")
