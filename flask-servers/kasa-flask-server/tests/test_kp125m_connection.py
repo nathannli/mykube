@@ -38,13 +38,16 @@ FLASK_APP_SPEC.loader.exec_module(FLASK_APP)
         ("10.20.0.116", DeviceEncryptionType.Klap),
     ],
 )
-def test_kp125m_connection_param_uses_tpap_override(ip, encryption_type):
+def test_kp125m_connection_param_uses_tpap_override(ip, encryption_type, monkeypatch):
+    # TPAP list is empty in prod (317b1d3); pin it so the override path stays tested.
+    monkeypatch.setattr(Config, "TPAP_KP125M_IPS", ["10.20.0.115"])
     connection_param = Config.get_kp125m_device_connect_param(ip)
 
     assert connection_param.encryption_type is encryption_type
 
 
 def test_connect_to_kp125m_device_uses_selected_connection_param(monkeypatch):
+    monkeypatch.setattr(Config, "TPAP_KP125M_IPS", ["10.20.0.115"])
     captured = {}
 
     async def fake_connect_to_device(device_config, ip, max_retries):
