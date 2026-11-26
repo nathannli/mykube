@@ -153,6 +153,7 @@ async def turn_off_desktop_plugs_if_no_power_HS300(
         if excluded_devices is None
         else excluded_devices
     )
+    all_off = True
     try:
         async with managed_device_connection(connect_to_hs300_device, ip) as dev:
             for plug in dev.children:
@@ -171,9 +172,10 @@ async def turn_off_desktop_plugs_if_no_power_HS300(
                             await plug.turn_off()
                             await send_discord_message(f"Plug {plug.alias} turned off")
                         else:
+                            # keep going so later idle plugs still get turned off
                             LOGGER.warning(f"Plug {plug.alias} is still on")
-                            return False
-        return True
+                            all_off = False
+        return all_off
     except Exception as e:
         log_device_error(ip, e)
         return False
@@ -254,6 +256,7 @@ async def turn_off_desktop_plugs_if_no_power_KP125M(
         if excluded_devices is None
         else excluded_devices
     )
+    all_off = True
     for ip in ip_list:
         try:
             async with managed_device_connection(connect_to_kp125m_device, ip) as dev:
@@ -272,12 +275,13 @@ async def turn_off_desktop_plugs_if_no_power_KP125M(
                             await dev.turn_off()
                             await send_discord_message(f"Plug {dev.alias} turned off")
                         else:
+                            # keep going so later idle plugs still get turned off
                             LOGGER.warning(f"Plug {dev.alias} is still on")
-                            return False
+                            all_off = False
         except Exception as e:
             log_device_error(ip, e)
-            return False
-    return True
+            all_off = False
+    return all_off
 
 
 async def get_metrics_KP125M(ip_list: list[str]) -> dict[Any, Any]:

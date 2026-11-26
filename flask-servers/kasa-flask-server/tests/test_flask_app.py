@@ -334,6 +334,51 @@ def test_excluded_idle_devices_are_not_turned_off():
     radiator.turn_off.assert_awaited_once()
 
 
+def test_busy_or_unreachable_plug_does_not_skip_later_idle_plugs():
+    """A busy plug or failed IP earlier in the list must not stop later idle plugs turning off."""
+    busy_hs300 = _make_energy_device("13kf", is_on=True, watts=150.0)
+    idle_hs300 = _make_energy_device("9950x", is_on=True, watts=2.0)
+    hs300 = _make_hs300([busy_hs300, idle_hs300])
+    busy_kp = _make_energy_device("5950x", is_on=True, watts=120.0)
+    idle_kp = _make_energy_device("9600k", is_on=True, watts=1.0)
+
+    async def fake_kp_connect(ip, *args, **kwargs):
+        if ip == "10.20.0.2":
+            raise RuntimeError("unreachable")
+        return {"10.20.0.1": busy_kp, "10.20.0.3": idle_kp}[ip]
+
+    with patch.object(
+        flask_app,
+        "connect_to_hs300_device",
+        AsyncMock(return_value=hs300),
+    ), patch.object(
+        flask_app,
+        "connect_to_kp125m_device",
+        AsyncMock(side_effect=fake_kp_connect),
+    ), patch.object(
+        flask_app,
+        "send_discord_message",
+        AsyncMock(),
+    ):
+        hs300_all_off = asyncio.run(
+            flask_app.turn_off_desktop_plugs_if_no_power_HS300(
+                "10.20.0.40", excluded_devices=[]
+            )
+        )
+        kp_all_off = asyncio.run(
+            flask_app.turn_off_desktop_plugs_if_no_power_KP125M(
+                ["10.20.0.1", "10.20.0.2", "10.20.0.3"], excluded_devices=[]
+            )
+        )
+
+    assert hs300_all_off is False
+    assert kp_all_off is False
+    busy_hs300.turn_off.assert_not_awaited()
+    idle_hs300.turn_off.assert_awaited_once()
+    busy_kp.turn_off.assert_not_awaited()
+    idle_kp.turn_off.assert_awaited_once()
+
+
 def test_require_list_env_parses_and_fails_when_missing(monkeypatch):
     """require_list_env raises when unset, returns [] for empty, parses YAML bullets and CSV."""
     import pytest

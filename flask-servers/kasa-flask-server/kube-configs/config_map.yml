@@ -29,7 +29,7 @@ data:
     - radiator
   RADIATOR_POWEROFF_EXCLUDED_DEVICES: |
     - 5950x
-  LOW_POWER_THRESHOLD_WATTS: "7"
+  LOW_POWER_THRESHOLD_WATTS: "10"
 
   # Other device groups
   HS300_DEVICE_NAME_LIST: |
